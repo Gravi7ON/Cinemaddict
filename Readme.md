@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Дмитрий Радионов](https://up.htmlacademy.ru/ecmascript/17/user/678357).
-* Наставник: `Сергей Андреев`.
+* Наставник: `Сергей Андреев`(https://up.htmlacademy.ru/ecmascript/17/user/812127).
 
 ---
 
