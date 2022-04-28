@@ -1,6 +1,6 @@
 import {createElement} from '../render.js';
 
-const createFlimsTopRatedListTemplate = () => (
+const createFilmsTopRatedListTemplate = () => (
   `<section class="films-list films-list--extra">
     <h2 class="films-list__title">Top rated</h2>
   </section>`
@@ -8,7 +8,7 @@ const createFlimsTopRatedListTemplate = () => (
 
 export default class FilmsTopRatedListView {
   getTemplate() {
-    return createFlimsTopRatedListTemplate();
+    return createFilmsTopRatedListTemplate();
   }
 
   getElement() {

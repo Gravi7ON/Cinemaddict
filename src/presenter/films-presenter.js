@@ -5,7 +5,7 @@ import FilmsTopRatedListView from '../view/films-top-rated-list-view.js';
 import FilmsMostRecommentedListView from '../view/films-most-recommented-list-view.js';
 import FilmsContainerView from '../view/films-container-view.js';
 import MovieCardView from '../view/movie-card-view';
-import ButtonShowMoreView from '../view/show-more-button-view.js';
+import ButtonShowMoreView from '../view/button-show-more-view.js';
 import {render} from '../render.js';
 
 export default class FilmsPresenter {
@@ -14,26 +14,11 @@ export default class FilmsPresenter {
   filmsTopRatedList = new FilmsTopRatedListView();
   filmsMostRecommentedList = new FilmsMostRecommentedListView();
 
-  getMovieCard() {
-    return () => new MovieCardView();
-  }
-
-  getContainerView(element) {
-    switch(element){
-      case 'films':
-      case 'recommented':
-      case 'rated':
-        return new FilmsContainerView();
-      default:
-        break;
-    }
-  }
-
   init = (boardContainer) => {
     this.boardContainer = boardContainer;
-    this.filmsContainer = this.getContainerView('films');
-    this.filmsTopRatedContainer = this.getContainerView('rated');
-    this.filmsMostRecommentedContainer = this.getContainerView('recommented');
+    this.filmsContainer = new FilmsContainerView();
+    this.filmsTopRatedContainer = new FilmsContainerView();
+    this.filmsMostRecommentedContainer = new FilmsContainerView();
 
     render(new SortMenuView(), this.boardContainer);
     render(this.filmsBoard, this.boardContainer);
@@ -42,7 +27,7 @@ export default class FilmsPresenter {
     render(new ButtonShowMoreView(), this.filmsList.getElement());
 
     for (let i = 0; i < 5; i++) {
-      render((this.getMovieCard())(), this.filmsContainer.getElement());
+      render(new MovieCardView(), this.filmsContainer.getElement());
     }
 
     render(this.filmsTopRatedList, this.filmsBoard.getElement());
@@ -52,8 +37,8 @@ export default class FilmsPresenter {
     render(this.filmsMostRecommentedContainer, this.filmsMostRecommentedList.getElement());
 
     for (let i = 0; i < 2; i++) {
-      render((this.getMovieCard())(), this.filmsTopRatedContainer.getElement());
-      render((this.getMovieCard())(), this.filmsMostRecommentedContainer.getElement());
+      render(new MovieCardView(), this.filmsTopRatedContainer.getElement());
+      render(new MovieCardView(), this.filmsMostRecommentedContainer.getElement());
     }
   };
 }
