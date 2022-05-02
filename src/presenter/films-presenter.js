@@ -6,6 +6,7 @@ import FilmsMostRecommentedListView from '../view/films-most-recommented-list-vi
 import FilmsContainerView from '../view/films-container-view.js';
 import MovieCardView from '../view/movie-card-view';
 import ButtonShowMoreView from '../view/button-show-more-view.js';
+import PopupView from '../view/popup-view.js';
 import {render} from '../render.js';
 
 export default class FilmsPresenter {
@@ -42,5 +43,7 @@ export default class FilmsPresenter {
       render(new MovieCardView(this.filmsCards[i]), this.filmsTopRatedContainer.getElement());
       render(new MovieCardView(this.filmsCards[i]), this.filmsMostRecommentedContainer.getElement());
     }
+
+    render(new PopupView(this.filmsCards[0]), boardContainer);
   };
 }
