@@ -174,7 +174,7 @@ const createPopupTemplate = (popup) => {
         </div>
       </form>
     </section>`
-  )
+  );
 };
 
 export default class PopupView {
