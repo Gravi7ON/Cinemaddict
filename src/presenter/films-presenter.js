@@ -14,8 +14,10 @@ export default class FilmsPresenter {
   filmsTopRatedList = new FilmsTopRatedListView();
   filmsMostRecommentedList = new FilmsMostRecommentedListView();
 
-  init = (boardContainer) => {
+  init = (boardContainer, filmsModel) => {
     this.boardContainer = boardContainer;
+    this.filmsModel = filmsModel;
+    this.filmsCards = [...this.filmsModel.getFilms()];
     this.filmsContainer = new FilmsContainerView();
     this.filmsTopRatedContainer = new FilmsContainerView();
     this.filmsMostRecommentedContainer = new FilmsContainerView();
@@ -26,8 +28,8 @@ export default class FilmsPresenter {
     render(this.filmsContainer, this.filmsList.getElement());
     render(new ButtonShowMoreView(), this.filmsList.getElement());
 
-    for (let i = 0; i < 5; i++) {
-      render(new MovieCardView(), this.filmsContainer.getElement());
+    for (let i = 0; i < this.filmsCards.length; i++) {
+      render(new MovieCardView(this.filmsCards[i]), this.filmsContainer.getElement());
     }
 
     render(this.filmsTopRatedList, this.filmsBoard.getElement());
@@ -37,8 +39,8 @@ export default class FilmsPresenter {
     render(this.filmsMostRecommentedContainer, this.filmsMostRecommentedList.getElement());
 
     for (let i = 0; i < 2; i++) {
-      render(new MovieCardView(), this.filmsTopRatedContainer.getElement());
-      render(new MovieCardView(), this.filmsMostRecommentedContainer.getElement());
+      render(new MovieCardView(this.filmsCards[i]), this.filmsTopRatedContainer.getElement());
+      render(new MovieCardView(this.filmsCards[i]), this.filmsMostRecommentedContainer.getElement());
     }
   };
 }
