@@ -2,6 +2,8 @@
 import {createElement} from '../render.js';
 import {formatDate} from '../utils.js';
 
+const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
+
 const createPopupTemplate = (popup) => {
   const {film_info, comments} = popup;
   const durationHours = Math.floor(film_info.runtime / 60);
@@ -63,9 +65,8 @@ const createPopupTemplate = (popup) => {
                 <tr class="film-details__row">
                   <td class="film-details__term">Genres</td>
                   <td class="film-details__cell">
-                    <span class="film-details__genre">${film_info.genre[0]}</span>
-                    <span class="film-details__genre">${film_info.genre[0]}</span>
-                    <span class="film-details__genre">${film_info.genre[0]}</span></td>
+                    ${createGenreTemplate(film_info.genre)}
+                  </td>
                 </tr>
               </table>
 
