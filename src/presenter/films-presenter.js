@@ -36,7 +36,7 @@ export default class FilmsPresenter {
     render(this.#filmsContainer, this.#filmsList.element);
     render(new ButtonShowMoreView(), this.#filmsList.element);
 
-    this.renderFilms = (card) => {
+    this.renderFilms = (card, typeList) => {
       const cardComponent = new MovieCardView(card);
       const popupComponent = new PopupView(card);
 
@@ -48,19 +48,44 @@ export default class FilmsPresenter {
         this.#boardContainer.removeChild(popupComponent.element);
       };
 
+      const onEscKeyDown = (evt) => {
+        if (evt.key === 'Escape' || evt.key === 'Esc') {
+          evt.preventDefault();
+          hidePopup();
+          document.body.classList.remove('hide-overflow');
+          document.removeEventListener('keydown', onEscKeyDown);
+        }
+      };
+
       cardComponent.element.querySelector('.film-card__link').addEventListener('click', () => {
         showPopup();
+        document.body.classList.add('hide-overflow');
+        document.addEventListener('keydown', onEscKeyDown);
       });
 
       popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
         hidePopup();
-      })
+        document.body.classList.remove('hide-overflow');
+        document.removeEventListener('keydown', onEscKeyDown);
+      });
 
-      render(cardComponent, this.#filmsContainer.element);
+      switch (typeList) {
+        case 'common':
+          render(cardComponent, this.#filmsContainer.element);
+          break;
+        case 'rated':
+          render(cardComponent, this.#filmsTopRatedContainer.element);
+          break;
+        case 'commented':
+          render(cardComponent, this.#filmsMostCommentedContainer.element);
+          break;
+        default:
+          break;
+      }
     };
 
     for (const filmCard of this.#filmsCards) {
-      this.renderFilms(filmCard);
+      this.renderFilms(filmCard, 'common');
     }
 
     render(this.#filmsTopRatedList, this.#filmsBoard.element);
@@ -70,8 +95,8 @@ export default class FilmsPresenter {
     render(this.#filmsMostCommentedContainer, this.#filmsMostCommentedList.element);
 
     for (const filmCard of this.#filmsCards.slice(0, 2)) {
-      render(new MovieCardView(filmCard), this.#filmsTopRatedContainer.element);
-      render(new MovieCardView(filmCard), this.#filmsMostCommentedContainer.element);
+      this.renderFilms(filmCard, 'rated');
+      this.renderFilms(filmCard, 'commented');
     }
   };
 }
