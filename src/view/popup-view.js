@@ -43,11 +43,11 @@ const createPopupTemplate = (popup) => {
                   <td class="film-details__cell">${film_info.director}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Writers</td>
+                  <td class="film-details__term">${film_info.actors.length > 1 ? 'Writers' : 'Writer'}</td>
                   <td class="film-details__cell">${film_info.writers.join(', ')}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Actors</td>
+                  <td class="film-details__term">${film_info.actors.length > 1 ? 'Actors' : 'Actor'}</td>
                   <td class="film-details__cell">${film_info.actors.join(', ')}</td>
                 </tr>
                 <tr class="film-details__row">
@@ -63,7 +63,7 @@ const createPopupTemplate = (popup) => {
                   <td class="film-details__cell">${film_info.release.release_country}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Genres</td>
+                  <td class="film-details__term">${film_info.genre.length > 1 ? 'Genres' : 'Genre'}</td>
                   <td class="film-details__cell">
                     ${createGenreTemplate(film_info.genre)}
                   </td>
@@ -179,23 +179,26 @@ const createPopupTemplate = (popup) => {
 };
 
 export default class PopupView {
+  #element = null;
+  #popup = null;
+
   constructor(popup) {
-    this.popup = popup;
+    this.#popup = popup;
   }
 
-  getTemplate() {
-    return createPopupTemplate(this.popup);
+  get template() {
+    return createPopupTemplate(this.#popup);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
