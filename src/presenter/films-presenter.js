@@ -56,39 +56,28 @@ export default class FilmsPresenter {
     const cardComponent = new MovieCardView(card);
     const popupComponent = new PopupView(card);
 
-    const showPopup = () => {
-      render(popupComponent, this.#boardContainer);
-    };
-
-    const hidePopup = () => {
-      this.#boardContainer.removeChild(popupComponent.element);
-    };
-
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        hidePopup();
+        this.#boardContainer.removeChild(popupComponent.element);
         document.body.classList.remove('hide-overflow');
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
     cardComponent.element.querySelector('.film-card__link').addEventListener('click', () => {
-      showPopup();
+      render(popupComponent, this.#boardContainer);
       document.body.classList.add('hide-overflow');
       document.addEventListener('keydown', onEscKeyDown);
     });
 
     popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
-      hidePopup();
+      this.#boardContainer.removeChild(popupComponent.element);
       document.body.classList.remove('hide-overflow');
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
     switch (typeList) {
-      case 'common':
-        render(cardComponent, this.#filmsContainer.element);
-        break;
       case 'rated':
         render(cardComponent, this.#filmsTopRatedContainer.element);
         break;
@@ -96,6 +85,7 @@ export default class FilmsPresenter {
         render(cardComponent, this.#filmsMostCommentedContainer.element);
         break;
       default:
+        render(cardComponent, this.#filmsContainer.element);
         break;
     }
   };
