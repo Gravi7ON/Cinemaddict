@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import {createElement} from '../render.js';
-import {formatDate} from '../utils.js';
+import {formatDate, getShortDescription} from '../utils.js';
 
 const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
 
@@ -20,7 +20,7 @@ const createPopupTemplate = (popup) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./${film_info.poster}" alt="">
+              <img class="film-details__poster-img" src="./${film_info.poster}" alt="${film_info.alternative_title}">
 
               <p class="film-details__age">${film_info.age_rating}+</p>
             </div>
@@ -43,11 +43,11 @@ const createPopupTemplate = (popup) => {
                   <td class="film-details__cell">${film_info.director}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Writers</td>
+                  <td class="film-details__term">${film_info.actors.length > 1 ? 'Writers' : 'Writer'}</td>
                   <td class="film-details__cell">${film_info.writers.join(', ')}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Actors</td>
+                  <td class="film-details__term">${film_info.actors.length > 1 ? 'Actors' : 'Actor'}</td>
                   <td class="film-details__cell">${film_info.actors.join(', ')}</td>
                 </tr>
                 <tr class="film-details__row">
@@ -63,7 +63,7 @@ const createPopupTemplate = (popup) => {
                   <td class="film-details__cell">${film_info.release.release_country}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Genres</td>
+                  <td class="film-details__term">${film_info.genre.length > 1 ? 'Genres' : 'Genre'}</td>
                   <td class="film-details__cell">
                     ${createGenreTemplate(film_info.genre)}
                   </td>
@@ -71,7 +71,7 @@ const createPopupTemplate = (popup) => {
               </table>
 
               <p class="film-details__film-description">
-                ${film_info.description}
+                ${getShortDescription(film_info.description)}
               </p>
             </div>
           </div>
@@ -85,7 +85,7 @@ const createPopupTemplate = (popup) => {
 
         <div class="film-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+            <h3 class="film-details__comments-title">${comments.length > 1 ? 'Comments' : 'Comment'} <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
               <li class="film-details__comment">
@@ -179,23 +179,26 @@ const createPopupTemplate = (popup) => {
 };
 
 export default class PopupView {
+  #element = null;
+  #popup = null;
+
   constructor(popup) {
-    this.popup = popup;
+    this.#popup = popup;
   }
 
-  getTemplate() {
-    return createPopupTemplate(this.popup);
+  get template() {
+    return createPopupTemplate(this.#popup);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import {createElement} from '../render.js';
-import {formatDate} from '../utils.js';
+import {formatDate, getShortDescription} from '../utils.js';
 
 const createMovieCardTemplate = (film) => {
   const {film_info, comments} = film;
@@ -19,7 +19,7 @@ const createMovieCardTemplate = (film) => {
           <span class="film-card__genre">${film_info.genre[0]}</span>
         </p>
         <img src="./${film_info.poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${film_info.description}</p>
+        <p class="film-card__description">${getShortDescription(film_info.description)}</p>
         <span class="film-card__comments">${comments.length} comments</span>
       </a>
       <div class="film-card__controls">
@@ -32,23 +32,26 @@ const createMovieCardTemplate = (film) => {
 };
 
 export default class MovieCardView {
+  #element = null;
+  #film = null;
+
   constructor(film) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createMovieCardTemplate(this.film);
+  get template() {
+    return createMovieCardTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
