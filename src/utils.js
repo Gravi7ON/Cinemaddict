@@ -14,4 +14,12 @@ const getRandomPositiveFloat = (min, max, amountFloat = 1) => {
 
 const formatDate = (date) => dayjs(date);
 
-export {getRandomPositiveInteger, getRandomPositiveFloat, formatDate};
+const getShortDescription = (description) => {
+  if (description.trim().length > 140) {
+    return `${description.trim().slice(0, 139)}...`;
+  }
+
+  return description.trim();
+};
+
+export {getRandomPositiveInteger, getRandomPositiveFloat, formatDate, getShortDescription};

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import {createElement} from '../render.js';
-import {formatDate} from '../utils.js';
+import {formatDate, getShortDescription} from '../utils.js';
 
 const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
 
@@ -71,7 +71,7 @@ const createPopupTemplate = (popup) => {
               </table>
 
               <p class="film-details__film-description">
-                ${film_info.description}
+                ${getShortDescription(film_info.description)}
               </p>
             </div>
           </div>
