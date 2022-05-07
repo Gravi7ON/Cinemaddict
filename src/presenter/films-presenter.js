@@ -66,6 +66,10 @@ export default class FilmsPresenter {
     };
 
     cardComponent.element.querySelector('.film-card__link').addEventListener('click', () => {
+      if (this.#boardContainer.querySelector('.film-details')) {
+        this.#boardContainer.querySelector('.film-details__close-btn').click();
+      }
+
       render(popupComponent, this.#boardContainer);
       document.body.classList.add('hide-overflow');
       document.addEventListener('keydown', onEscKeyDown);
