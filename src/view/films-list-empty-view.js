@@ -1,17 +1,16 @@
 import {createElement} from '../render.js';
 
-const createFilmAmountTemplate = (film) => `<p>${film.length} movies inside</p>`;
+const createFilmsListEmptyTemplate = () => (
+  `<section class="films-list">
+    <h2 class="films-list__title">There are no movies in our database</h2>
+  </section>`
+);
 
-export default class FilmAmountView {
+export default class FilmsListEmptyView {
   #element = null;
-  #film = null;
-
-  constructor(film) {
-    this.#film = film;
-  }
 
   get template() {
-    return createFilmAmountTemplate(this.#film);
+    return createFilmsListEmptyTemplate();
   }
 
   get element() {
