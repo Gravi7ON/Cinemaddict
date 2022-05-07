@@ -37,7 +37,7 @@ export default class FilmsPresenter {
     render(new ButtonShowMoreView(), this.#filmsList.element);
 
     for (const filmCard of this.#filmsCards) {
-      this.#renderFilms(filmCard, 'common');
+      this.#renderFilms(filmCard);
     }
 
     render(this.#filmsTopRatedList, this.#filmsBoard.element);
