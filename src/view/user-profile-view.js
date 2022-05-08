@@ -2,11 +2,11 @@ import {createElement} from '../render.js';
 
 const getRank = (watchedFilms) => {
   if (watchedFilms >= 1 && watchedFilms <= 10) {
-    return 'novice';
+    return 'Novice';
   } else if (watchedFilms > 10 && watchedFilms <= 20) {
-    return 'fan';
+    return 'Fan';
   }
-  return 'movie buff';
+  return 'Movie Buff';
 };
 
 const createUserProfileTemplate = (film) => (
