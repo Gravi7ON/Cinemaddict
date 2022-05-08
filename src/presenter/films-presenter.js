@@ -23,6 +23,17 @@ export default class FilmsPresenter {
   #filmsMostCommentedContainer = null;
   #filmsCards = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
+
+  constructor(boardContainer, filmsModel) {
+    this.#boardContainer = boardContainer;
+    this.#filmsModel = filmsModel;
+  }
+
+  init() {
+    this.#filmsCards = [...this.#filmsModel.films];
+    this.#renderFilmLists();
+  }
+
   #userProfileElement = document.querySelector('.header');
   #filmAmountElement = document.querySelector('.footer__statistics');
 
@@ -74,9 +85,7 @@ export default class FilmsPresenter {
     }
   };
 
-  init = (boardContainer, filmsModel) => {
-    this.#boardContainer = boardContainer;
-    this.#filmsModel = filmsModel;
+  #renderFilmLists = () => {
     this.#filmsCards = [...this.#filmsModel.films];
     this.#filmsContainer = new FilmsContainerView();
     this.#filmsTopRatedContainer = new FilmsContainerView();
@@ -88,7 +97,7 @@ export default class FilmsPresenter {
       render(new FilmsListEmptyView(), this.#filmsBoard.element);
       render(new FilmAmountView(this.#filmsCards), this.#filmAmountElement);
     } else {
-      render(new UserProfileView(), this.#userProfileElement);
+      render(new UserProfileView(this.#filmsCards), this.#userProfileElement);
       render(new FilterMenuView(this.#filmsCards), this.#boardContainer);
       render(new SortMenuView(), this.#boardContainer);
       render(this.#filmsBoard, this.#boardContainer);
