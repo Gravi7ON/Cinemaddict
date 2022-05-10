@@ -104,8 +104,6 @@ const getDate = () => {
   return dates[getRandomPositiveInteger(0, dates.length - 1)];
 };
 
-const getRandomBoolean = () => getRandomPositiveInteger(0, 100) > 50;
-
 export const createFilm = () => ({
   'id': getRandomPositiveInteger(0, 10),
   'comments': createComment(),
@@ -131,9 +129,9 @@ export const createFilm = () => ({
     'description': `${createDescription()} ${createDescription()}`
   },
   'user_details': {
-    'watchlist': getRandomBoolean(),
-    'already_watched': getRandomBoolean(),
+    'watchlist': Boolean(getRandomPositiveInteger(0, 1)),
+    'already_watched': Boolean(getRandomPositiveInteger(0, 1)),
     'watching_date': '2019-04-12T16:12:32.554Z',
-    'favorite': getRandomBoolean()
+    'favorite': Boolean(getRandomPositiveInteger(0, 1))
   }
 });
