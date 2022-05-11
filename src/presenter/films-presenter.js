@@ -23,7 +23,6 @@ export default class FilmsPresenter {
   #filmsContainer = null;
   #filmsTopRatedContainer = null;
   #filmsMostCommentedContainer = null;
-  #totalFilmsAvailable = null;
   #filmsCards = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
 
@@ -95,7 +94,6 @@ export default class FilmsPresenter {
     this.#filmsContainer = new FilmsContainerView();
     this.#filmsTopRatedContainer = new FilmsContainerView();
     this.#filmsMostCommentedContainer = new FilmsContainerView();
-    this.#totalFilmsAvailable = Math.min(this.#filmsCards.length, FILM_COUNT_PER_STEP);
 
     if (this.#filmsCards.length === 0) {
       render(new FilterMenuView(this.#filmsCards), this.#boardContainer);
@@ -112,7 +110,9 @@ export default class FilmsPresenter {
     render(this.#filmsList, this.#filmsBoard.element);
     render(this.#filmsContainer, this.#filmsList.element);
 
-    for (let i = 0; i < this.#totalFilmsAvailable; i++) {
+    const totalFilmsAvailable = Math.min(this.#filmsCards.length, FILM_COUNT_PER_STEP);
+
+    for (let i = 0; i < totalFilmsAvailable; i++) {
       this.#renderFilms(this.#filmsCards[i]);
     }
 

@@ -1,13 +1,13 @@
 import {createElement} from '../render.js';
 
-const createFilmAmountTemplate = (film) => `<p>${film.length} ${film.length > 1 ? 'movies' : 'movie'} inside</p>`;
+const createFilmAmountTemplate = (films) => `<p>${films.length} ${films.length > 1 ? 'movies' : 'movie'} inside</p>`;
 
 export default class FilmAmountView {
   #element = null;
   #films = null;
 
-  constructor(film) {
-    this.#films = film;
+  constructor(films) {
+    this.#films = films;
   }
 
   get template() {

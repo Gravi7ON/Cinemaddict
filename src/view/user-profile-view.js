@@ -3,27 +3,35 @@ import {createElement} from '../render.js';
 const getRank = (watchedFilms) => {
   if (watchedFilms === 0) {
     return '';
-  } else if (watchedFilms >= 1 && watchedFilms <= 10) {
+  }
+
+  if (watchedFilms >= 1 && watchedFilms <= 10) {
     return 'Novice';
-  } else if (watchedFilms > 10 && watchedFilms <= 20) {
+  }
+
+  if (watchedFilms > 10 && watchedFilms <= 20) {
     return 'Fan';
   }
+
   return 'Movie Buff';
 };
 
-const createUserProfileTemplate = (film) => (
-  `<section class="header__profile profile">
-    <p class="profile__rating">${getRank(film.filter((item) => item.user_details.already_watched).length)}</p>
+
+const createUserProfileTemplate = (films) => {
+  const userRank = getRank(films.filter((item) => item.user_details.already_watched).length);
+
+  return `<section class="header__profile profile">
+    <p class="profile__rating">${userRank}</p>
     <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-  </section>`
-);
+  </section>`;
+};
 
 export default class UserProfileView {
   #element = null;
   #films = null;
 
-  constructor(film) {
-    this.#films = film;
+  constructor(films) {
+    this.#films = films;
   }
 
   get template() {
