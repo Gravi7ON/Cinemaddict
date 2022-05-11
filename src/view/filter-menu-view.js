@@ -1,19 +1,28 @@
 import {createElement} from '../render.js';
 
-const createFilterMenuTemplate = () => (
-  `<nav class="main-navigation">
+const createFilterMenuTemplate = (films) => {
+  const countWatchList = films.filter((item) => item.user_details.watchlist).length;
+  const countHistory = films.filter((item) => item.user_details.already_watched).length;
+  const countFavorites = films.filter((item) => item.user_details.favorite).length;
+
+  return `<nav class="main-navigation">
     <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">13</span></a>
-    <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">4</span></a>
-    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
-  </nav>`
-);
+    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${countWatchList}</span></a>
+    <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">${countHistory}</span></a>
+    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">${countFavorites}</span></a>
+  </nav>`;
+};
 
 export default class FilterMenuView {
   #element = null;
+  #films = null;
+
+  constructor(films) {
+    this.#films = films;
+  }
 
   get template() {
-    return createFilterMenuTemplate();
+    return createFilterMenuTemplate(this.#films);
   }
 
   get element() {

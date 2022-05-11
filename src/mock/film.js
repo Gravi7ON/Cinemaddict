@@ -129,9 +129,9 @@ export const createFilm = () => ({
     'description': `${createDescription()} ${createDescription()}`
   },
   'user_details': {
-    'watchlist': false,
-    'already_watched': true,
+    'watchlist': Boolean(getRandomPositiveInteger(0, 1)),
+    'already_watched': Boolean(getRandomPositiveInteger(0, 1)),
     'watching_date': '2019-04-12T16:12:32.554Z',
-    'favorite': false
+    'favorite': Boolean(getRandomPositiveInteger(0, 1))
   }
 });
