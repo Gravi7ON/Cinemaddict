@@ -1,4 +1,4 @@
-import {getRandomPositiveInteger, getRandomPositiveFloat} from '../utils.js';
+import {getRandomPositiveInteger, getRandomPositiveFloat} from '../utils/common.js';
 
 const createTitle = () => {
   const titles = [

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import AbstractView from '../framework/view/abstract-view.js';
-import {formatDate, getShortDescription} from '../utils.js';
+import {formatDate, getShortDescription} from '../utils/film.js';
 
 const createMovieCardTemplate = (film) => {
   const {film_info, comments} = film;

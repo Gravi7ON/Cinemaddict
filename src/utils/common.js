@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-
 const getRandomPositiveInteger = (min, max) => {
   const from = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
   const to = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
@@ -12,14 +10,4 @@ const getRandomPositiveFloat = (min, max, amountFloat = 1) => {
   return +(Math.random() * (to - from) + from).toFixed(amountFloat);
 };
 
-const formatDate = (date) => dayjs(date);
-
-const getShortDescription = (description) => {
-  if (description.trim().length > 140) {
-    return `${description.trim().slice(0, 139)}...`;
-  }
-
-  return description.trim();
-};
-
-export {getRandomPositiveInteger, getRandomPositiveFloat, formatDate, getShortDescription};
+export {getRandomPositiveInteger, getRandomPositiveFloat};
