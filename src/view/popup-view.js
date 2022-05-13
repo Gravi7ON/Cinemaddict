@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import {createElement} from '../render.js';
-import {formatDate, getShortDescription} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import {formatDate, getShortDescription} from '../utils/film.js';
 
 const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
 
@@ -178,11 +178,11 @@ const createPopupTemplate = (popup) => {
   );
 };
 
-export default class PopupView {
-  #element = null;
+export default class PopupView extends AbstractView {
   #popup = null;
 
   constructor(popup) {
+    super();
     this.#popup = popup;
   }
 
@@ -190,15 +190,13 @@ export default class PopupView {
     return createPopupTemplate(this.#popup);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #onClick = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  setElementClick = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#onClick);
+  };
 }

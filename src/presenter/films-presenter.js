@@ -11,7 +11,7 @@ import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import UserProfileView from '../view/user-profile-view.js';
 import FilterMenuView from '../view/filter-menu-view.js';
 import FilmAmountView from '../view/film-amount-view.js';
-import {RenderPosition, render} from '../render.js';
+import {RenderPosition, render, remove} from '../framework/render.js';
 
 const FILM_COUNT_PER_STEP = 5;
 const FILMS_RATED_LIST = 'rated';
@@ -60,7 +60,7 @@ export default class FilmsPresenter {
       }
     };
 
-    cardComponent.element.querySelector('.film-card__link').addEventListener('click', () => {
+    cardComponent.setElementClick(() => {
       if (this.#bodyContentElement.querySelector('.film-details')) {
         this.#bodyContentElement.querySelector('.film-details__close-btn').click();
       }
@@ -70,7 +70,7 @@ export default class FilmsPresenter {
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+    popupComponent.setElementClick(() => {
       this.#bodyContentElement.removeChild(popupComponent.element);
       this.#bodyContentElement.classList.remove('hide-overflow');
       document.removeEventListener('keydown', onEscKeyDown);
@@ -103,6 +103,7 @@ export default class FilmsPresenter {
 
       return;
     }
+
     render(new UserProfileView(this.#filmsCards), this.#userProfileElement);
     render(new FilterMenuView(this.#filmsCards), this.#boardContainer);
     render(new SortMenuView(), this.#boardContainer);
@@ -119,7 +120,7 @@ export default class FilmsPresenter {
     if (this.#filmsCards.length > FILM_COUNT_PER_STEP) {
       render(this.#showMoreButtonComponent, this.#filmsList.element);
 
-      this.#showMoreButtonComponent.element.addEventListener('click', this.#onShowMoreButtonClick);
+      this.#showMoreButtonComponent.setElementClick(this.#onShowMoreButtonClick);
     }
 
     render(this.#filmsTopRatedList, this.#filmsBoard.element);
@@ -132,11 +133,11 @@ export default class FilmsPresenter {
       this.#renderFilms(filmCard, FILMS_RATED_LIST);
       this.#renderFilms(filmCard, FILMS_COMMENTED_LIST);
     }
+
     render(new FilmAmountView(this.#filmsCards), this.#filmAmountElement);
   };
 
-  #onShowMoreButtonClick = (evt) => {
-    evt.preventDefault();
+  #onShowMoreButtonClick = () => {
     this.#filmsCards
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => this.#renderFilms(film));
@@ -144,8 +145,7 @@ export default class FilmsPresenter {
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= this.#filmsCards.length) {
-      this.#showMoreButtonComponent.element.remove();
-      this.#showMoreButtonComponent.removeElement();
+      remove(this.#showMoreButtonComponent);
     }
   };
 }

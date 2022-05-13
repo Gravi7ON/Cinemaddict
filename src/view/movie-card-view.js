@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import {createElement} from '../render.js';
-import {formatDate, getShortDescription} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import {formatDate, getShortDescription} from '../utils/film.js';
 
 const createMovieCardTemplate = (film) => {
   const {film_info, comments} = film;
@@ -31,11 +31,11 @@ const createMovieCardTemplate = (film) => {
   );
 };
 
-export default class MovieCardView {
-  #element = null;
+export default class MovieCardView extends AbstractView {
   #film = null;
 
   constructor(film) {
+    super();
     this.#film = film;
   }
 
@@ -43,15 +43,13 @@ export default class MovieCardView {
     return createMovieCardTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #onClick = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  setElementClick = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#onClick);
+  };
 }
