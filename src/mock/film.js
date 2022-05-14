@@ -32,7 +32,7 @@ const createGenre = () => {
     ['Sci-Fi'],
     ['Action', 'Horror', 'Family', 'Sci-Fi', 'Drama'],
     ['Horror', 'Sci-Fi', 'Animation', 'Thriller'],
-    ['Sci-Fi', 'Animation'],
+    ['Sci-Fi', 'Animation', 'Horror'],
     ['Comedy', 'Family', 'Drama'],
     ['Drama', 'Horror', 'Animation'],
     ['Action', 'Animation', 'Horror', 'Comedy', 'Family', 'Adventure']
