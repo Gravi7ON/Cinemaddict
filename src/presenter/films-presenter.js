@@ -4,14 +4,13 @@ import FilmsListView from '../view/films-list-view.js';
 import FilmsTopRatedListView from '../view/films-top-rated-list-view.js';
 import FilmsMostCommentedListView from '../view/films-most-commented-list-view.js';
 import FilmsContainerView from '../view/films-container-view.js';
-import MovieCardView from '../view/movie-card-view';
 import ButtonShowMoreView from '../view/button-show-more-view.js';
-import PopupView from '../view/popup-view.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import UserProfileView from '../view/user-profile-view.js';
 import FilterMenuView from '../view/filter-menu-view.js';
 import FilmAmountView from '../view/film-amount-view.js';
-import {RenderPosition, render, remove} from '../framework/render.js';
+import FilmCardPresenter from './film-card-presenter.js';
+import {render, remove} from '../framework/render.js';
 
 const FILM_COUNT_PER_STEP = 5;
 const FILMS_RATED_LIST = 'rated';
@@ -20,20 +19,18 @@ const FILMS_COMMENTED_LIST = 'commented';
 export default class FilmsPresenter {
   #boardContainer = null;
   #filmsModel = null;
-  #filmsContainer = null;
   #filmsTopRatedContainer = null;
   #filmsMostCommentedContainer = null;
   #filmsCards = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
 
-  #bodyContentElement = document.body;
   #userProfileElement = document.querySelector('.header');
-  #footerContentElement  = document.querySelector('.footer');
   #filmAmountElement = document.querySelector('.footer__statistics');
 
   #filmsBoard = new FilmsBoardView();
   #filmsList = new FilmsListView();
   #sortMenuComponent = new SortMenuView();
+  #filmsContainer = new FilmsContainerView();
   #filmsTopRatedList = new FilmsTopRatedListView();
   #filmsMostCommentedList = new FilmsMostCommentedListView();
   #showMoreButtonComponent = new ButtonShowMoreView();
@@ -43,10 +40,10 @@ export default class FilmsPresenter {
     this.#filmsModel = filmsModel;
   }
 
-  init() {
+  init = () => {
     this.#filmsCards = [...this.#filmsModel.films];
     this.#renderFilmLists();
-  }
+  };
 
   #renderFilterMenu = (filmsCards) => {
     render(new FilterMenuView(filmsCards), this.#boardContainer);
@@ -73,57 +70,19 @@ export default class FilmsPresenter {
     this.#renderFilmAmount(filmsCards);
   };
 
-  #renderFilms = (card, typeList) => {
-    const cardComponent = new MovieCardView(card);
-    const popupComponent = new PopupView(card);
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        this.#bodyContentElement.removeChild(popupComponent.element);
-        this.#bodyContentElement.classList.remove('hide-overflow');
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    cardComponent.setElementClick(() => {
-      if (this.#bodyContentElement.querySelector('.film-details')) {
-        this.#bodyContentElement.querySelector('.film-details__close-btn').click();
-      }
-
-      render(popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
-      this.#bodyContentElement.classList.add('hide-overflow');
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    popupComponent.setElementClick(() => {
-      this.#bodyContentElement.removeChild(popupComponent.element);
-      this.#bodyContentElement.classList.remove('hide-overflow');
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    switch (typeList) {
-      case FILMS_RATED_LIST:
-        render(cardComponent, this.#filmsTopRatedContainer.element);
-        break;
-      case FILMS_COMMENTED_LIST:
-        render(cardComponent, this.#filmsMostCommentedContainer.element);
-        break;
-      default:
-        render(cardComponent, this.#filmsContainer.element);
-        break;
-    }
-  };
-
   #renderFilmsCardsPerStep = (from, to) => {
     this.#filmsCards
       .slice(from, to)
-      .forEach((film) => this.#renderFilms(film));
+      .forEach((film) => this.#renderFilms(film, null, this.#filmsContainer));
+  };
+
+  #renderFilms = (card, typeList, typeContainer) => {
+    const filmCardPresenter = new FilmCardPresenter(typeContainer);
+    filmCardPresenter.init(card, typeList);
   };
 
   #renderFilmLists = () => {
     this.#filmsCards = [...this.#filmsModel.films];
-    this.#filmsContainer = new FilmsContainerView();
     this.#filmsTopRatedContainer = new FilmsContainerView();
     this.#filmsMostCommentedContainer = new FilmsContainerView();
 
@@ -143,7 +102,7 @@ export default class FilmsPresenter {
     const totalFilmsAvailable = Math.min(this.#filmsCards.length, FILM_COUNT_PER_STEP);
 
     for (let i = 0; i < totalFilmsAvailable; i++) {
-      this.#renderFilms(this.#filmsCards[i]);
+      this.#renderFilms(this.#filmsCards[i], null, this.#filmsContainer);
     }
 
     if (this.#filmsCards.length > FILM_COUNT_PER_STEP) {
@@ -157,8 +116,8 @@ export default class FilmsPresenter {
     render(this.#filmsMostCommentedContainer, this.#filmsMostCommentedList.element);
 
     for (const filmCard of this.#filmsCards.slice(0, 2)) {
-      this.#renderFilms(filmCard, FILMS_RATED_LIST);
-      this.#renderFilms(filmCard, FILMS_COMMENTED_LIST);
+      this.#renderFilms(filmCard, FILMS_RATED_LIST, this.#filmsTopRatedContainer);
+      this.#renderFilms(filmCard, FILMS_COMMENTED_LIST, this.#filmsMostCommentedContainer);
     }
 
     this.#renderFilmAmount(this.#filmsCards);
