@@ -26,6 +26,18 @@ export default class FilmsPresenter {
   #filmsCards = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
 
+  #bodyContentElement = document.body;
+  #userProfileElement = document.querySelector('.header');
+  #footerContentElement  = document.querySelector('.footer');
+  #filmAmountElement = document.querySelector('.footer__statistics');
+
+  #filmsBoard = new FilmsBoardView();
+  #filmsList = new FilmsListView();
+  #sortMenuComponent = new SortMenuView();
+  #filmsTopRatedList = new FilmsTopRatedListView();
+  #filmsMostCommentedList = new FilmsMostCommentedListView();
+  #showMoreButtonComponent = new ButtonShowMoreView();
+
   constructor(boardContainer, filmsModel) {
     this.#boardContainer = boardContainer;
     this.#filmsModel = filmsModel;
@@ -36,16 +48,30 @@ export default class FilmsPresenter {
     this.#renderFilmLists();
   }
 
-  #bodyContentElement = document.body;
-  #userProfileElement = document.querySelector('.header');
-  #footerContentElement  = document.querySelector('.footer');
-  #filmAmountElement = document.querySelector('.footer__statistics');
+  #renderFilterMenu = (filmsCards) => {
+    render(new FilterMenuView(filmsCards), this.#boardContainer);
+  };
 
-  #filmsBoard = new FilmsBoardView();
-  #filmsList = new FilmsListView();
-  #filmsTopRatedList = new FilmsTopRatedListView();
-  #filmsMostCommentedList = new FilmsMostCommentedListView();
-  #showMoreButtonComponent = new ButtonShowMoreView();
+  #renderSortMenu = () => {
+    render(this.#sortMenuComponent, this.#boardContainer);
+  };
+
+  #renderFilmAmount = (filmsCards) => {
+    render(new FilmAmountView(filmsCards), this.#filmAmountElement);
+  };
+
+  #renderShowMoreButton = () => {
+    render(this.#showMoreButtonComponent, this.#filmsList.element);
+
+    this.#showMoreButtonComponent.setElementClick(this.#onShowMoreButtonClick);
+  };
+
+  #renderNoFilms = (filmsCards) => {
+    this.#renderFilterMenu(filmsCards);
+    render(this.#filmsBoard, this.#boardContainer);
+    render(new FilmsListEmptyView(), this.#filmsBoard.element);
+    this.#renderFilmAmount(filmsCards);
+  };
 
   #renderFilms = (card, typeList) => {
     const cardComponent = new MovieCardView(card);
@@ -89,6 +115,12 @@ export default class FilmsPresenter {
     }
   };
 
+  #renderFilmsCardsPerStep = (from, to) => {
+    this.#filmsCards
+      .slice(from, to)
+      .forEach((film) => this.#renderFilms(film));
+  };
+
   #renderFilmLists = () => {
     this.#filmsCards = [...this.#filmsModel.films];
     this.#filmsContainer = new FilmsContainerView();
@@ -96,17 +128,14 @@ export default class FilmsPresenter {
     this.#filmsMostCommentedContainer = new FilmsContainerView();
 
     if (this.#filmsCards.length === 0) {
-      render(new FilterMenuView(this.#filmsCards), this.#boardContainer);
-      render(this.#filmsBoard, this.#boardContainer);
-      render(new FilmsListEmptyView(), this.#filmsBoard.element);
-      render(new FilmAmountView(this.#filmsCards), this.#filmAmountElement);
+      this.#renderNoFilms(this.#filmsCards);
 
       return;
     }
 
     render(new UserProfileView(this.#filmsCards), this.#userProfileElement);
-    render(new FilterMenuView(this.#filmsCards), this.#boardContainer);
-    render(new SortMenuView(), this.#boardContainer);
+    this.#renderFilterMenu(this.#filmsCards);
+    this.#renderSortMenu();
     render(this.#filmsBoard, this.#boardContainer);
     render(this.#filmsList, this.#filmsBoard.element);
     render(this.#filmsContainer, this.#filmsList.element);
@@ -118,9 +147,7 @@ export default class FilmsPresenter {
     }
 
     if (this.#filmsCards.length > FILM_COUNT_PER_STEP) {
-      render(this.#showMoreButtonComponent, this.#filmsList.element);
-
-      this.#showMoreButtonComponent.setElementClick(this.#onShowMoreButtonClick);
+      this.#renderShowMoreButton();
     }
 
     render(this.#filmsTopRatedList, this.#filmsBoard.element);
@@ -134,13 +161,11 @@ export default class FilmsPresenter {
       this.#renderFilms(filmCard, FILMS_COMMENTED_LIST);
     }
 
-    render(new FilmAmountView(this.#filmsCards), this.#filmAmountElement);
+    this.#renderFilmAmount(this.#filmsCards);
   };
 
   #onShowMoreButtonClick = () => {
-    this.#filmsCards
-      .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
-      .forEach((film) => this.#renderFilms(film));
+    this.#renderFilmsCardsPerStep(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
 
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
