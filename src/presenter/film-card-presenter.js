@@ -28,7 +28,10 @@ export default class FilmCardPresenter {
     this.#filmCardComponent.setWatchedElementClick(this.#onWatchedClick);
     this.#filmCardComponent.setFavoriteElementClick(this.#onFavoriteClick);
 
-    this.#popupComponent.setElementClick(this.#closePopupOnButtonClick);
+    this.#popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
+    this.#popupComponent.setWatchlistElementClick(this.#onWatchlistClick);
+    this.#popupComponent.setWatchedElementClick(this.#onWatchedClick);
+    this.#popupComponent.setFavoriteElementClick(this.#onFavoriteClick);
 
     switch (typeList) {
       case typeList === 'rated':
@@ -49,15 +52,21 @@ export default class FilmCardPresenter {
   };
 
   #onWatchlistClick = () => {
-    this.#changeData({...this.#film, watchlist: !this.#film.watchlist});
+    this.#changeData({
+      ...this.#film,
+      'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}});
   };
 
   #onWatchedClick = () => {
-    this.#changeData({...this.#film, watchlist: !this.#film.watchlist});
+    this.#changeData({
+      ...this.#film,
+      'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}});
   };
 
   #onFavoriteClick = () => {
-    this.#changeData({...this.#film, watchlist: !this.#film.watchlist});
+    this.#changeData({
+      ...this.#film,
+      'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
   };
 
   #renderPopupOnCardClick = () => {
@@ -71,7 +80,7 @@ export default class FilmCardPresenter {
   };
 
   #closePopupOnButtonClick = () => {
-    this.#bodyContentElement.removeChild(this.#popupComponent.element);
+    this.#bodyContentElement.removeChild(this.#bodyContentElement.querySelector('.film-details'));
     this.#bodyContentElement.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };
@@ -79,7 +88,7 @@ export default class FilmCardPresenter {
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#bodyContentElement.removeChild(this.#popupComponent.element);
+      this.#bodyContentElement.removeChild(this.#bodyContentElement.querySelector('.film-details'));
       this.#bodyContentElement.classList.remove('hide-overflow');
       document.removeEventListener('keydown', this.#onEscKeyDown);
     }

@@ -20,8 +20,6 @@ const FILMS_COMMENTED_LIST = 'commented';
 export default class FilmsPresenter {
   #boardContainer = null;
   #filmsModel = null;
-  #filmsTopRatedContainer = null;
-  #filmsMostCommentedContainer = null;
   #filmsCards = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
 
@@ -32,6 +30,8 @@ export default class FilmsPresenter {
   #filmsList = new FilmsListView();
   #sortMenuComponent = new SortMenuView();
   #filmsContainer = new FilmsContainerView();
+  #filmsTopRatedContainer = new FilmsContainerView();
+  #filmsMostCommentedContainer = new FilmsContainerView();
   #filmsTopRatedList = new FilmsTopRatedListView();
   #filmsMostCommentedList = new FilmsMostCommentedListView();
   #showMoreButtonComponent = new ButtonShowMoreView();
@@ -86,8 +86,6 @@ export default class FilmsPresenter {
 
   #renderFilmLists = () => {
     this.#filmsCards = [...this.#filmsModel.films];
-    this.#filmsTopRatedContainer = new FilmsContainerView();
-    this.#filmsMostCommentedContainer = new FilmsContainerView();
 
     if (this.#filmsCards.length === 0) {
       this.#renderNoFilms(this.#filmsCards);
