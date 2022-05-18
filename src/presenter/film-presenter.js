@@ -2,7 +2,10 @@ import {RenderPosition, render, remove} from '../framework/render';
 import MovieCardView from '../view/movie-card-view';
 import PopupView from '../view/popup-view.js';
 
-export default class FilmCardPresenter {
+const FILMS_RATED_LIST = 'rated';
+const FILMS_COMMENTED_LIST = 'commented';
+
+export default class FilmPresenter {
   #filmCardComponent = null;
   #filmsContainer = null;
   #popupComponent = null;
@@ -34,10 +37,10 @@ export default class FilmCardPresenter {
     this.#popupComponent.setFavoriteElementClick(this.#onFavoriteClick);
 
     switch (typeList) {
-      case typeList === 'rated':
+      case FILMS_RATED_LIST:
         render(this.#filmCardComponent, this.#filmsContainer.element);
         break;
-      case typeList === 'commented':
+      case FILMS_COMMENTED_LIST:
         render(this.#filmCardComponent, this.#filmsContainer.element);
         break;
       default:
@@ -88,9 +91,7 @@ export default class FilmCardPresenter {
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#bodyContentElement.removeChild(this.#bodyContentElement.querySelector('.film-details'));
-      this.#bodyContentElement.classList.remove('hide-overflow');
-      document.removeEventListener('keydown', this.#onEscKeyDown);
+      this.#closePopupOnButtonClick();
     }
   };
 }

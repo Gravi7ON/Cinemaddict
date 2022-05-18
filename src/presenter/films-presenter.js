@@ -9,7 +9,7 @@ import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import UserProfileView from '../view/user-profile-view.js';
 import FilterMenuView from '../view/filter-menu-view.js';
 import FilmAmountView from '../view/film-amount-view.js';
-import FilmCardPresenter from './film-card-presenter.js';
+import FilmPresenter from './film-presenter.js';
 import {render, remove} from '../framework/render.js';
 import {updateItem} from '../utils/common.js';
 
@@ -79,7 +79,7 @@ export default class FilmsPresenter {
   };
 
   #renderFilms = (card, typeList, typeContainer) => {
-    const filmCardPresenter = new FilmCardPresenter(typeContainer, this.#onFilmCardChange);
+    const filmCardPresenter = new FilmPresenter(typeContainer, this.#onFilmCardChange);
     filmCardPresenter.init(card, typeList);
     this.#filmPresenter.set(card.id, filmCardPresenter);
   };
