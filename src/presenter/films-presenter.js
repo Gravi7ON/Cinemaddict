@@ -13,15 +13,17 @@ import FilmPresenter from './film-presenter.js';
 import {render, remove} from '../framework/render.js';
 import {updateItem} from '../utils/common.js';
 
-const FILM_COUNT_PER_STEP = 5;
-const FILMS_RATED_LIST = 'rated';
-const FILMS_COMMENTED_LIST = 'commented';
+const Films = {
+  COUNT_PER_STEP: 5,
+  RATED_LIST: 'rated',
+  COMMENTED_LIST: 'commented'
+};
 
 export default class FilmsPresenter {
   #boardContainer = null;
   #filmsModel = null;
   #filmsCards = [];
-  #renderedFilmCount = FILM_COUNT_PER_STEP;
+  #renderedFilmCount = Films.COUNT_PER_STEP;
 
   #userProfileElement = document.querySelector('.header');
   #filmAmountElement = document.querySelector('.footer__statistics');
@@ -79,9 +81,9 @@ export default class FilmsPresenter {
   };
 
   #renderFilms = (card, typeList, typeContainer) => {
-    const filmCardPresenter = new FilmPresenter(typeContainer, this.#onFilmCardChange);
-    filmCardPresenter.init(card, typeList);
-    this.#filmPresenter.set(card.id, filmCardPresenter);
+    const filmPresenter = new FilmPresenter(typeContainer, this.#onFilmCardChange, this.#onModeChange);
+    filmPresenter.init(card, typeList);
+    this.#filmPresenter.set(card.id, filmPresenter);
   };
 
   #renderFilmLists = () => {
@@ -100,13 +102,13 @@ export default class FilmsPresenter {
     render(this.#filmsList, this.#filmsBoard.element);
     render(this.#filmsContainer, this.#filmsList.element);
 
-    const totalFilmsAvailable = Math.min(this.#filmsCards.length, FILM_COUNT_PER_STEP);
+    const totalFilmsAvailable = Math.min(this.#filmsCards.length, Films.COUNT_PER_STEP);
 
     for (let i = 0; i < totalFilmsAvailable; i++) {
       this.#renderFilms(this.#filmsCards[i], null, this.#filmsContainer);
     }
 
-    if (this.#filmsCards.length > FILM_COUNT_PER_STEP) {
+    if (this.#filmsCards.length > Films.COUNT_PER_STEP) {
       this.#renderShowMoreButton();
     }
 
@@ -117,8 +119,8 @@ export default class FilmsPresenter {
     render(this.#filmsMostCommentedContainer, this.#filmsMostCommentedList.element);
 
     for (const filmCard of this.#filmsCards.slice(0, 2)) {
-      this.#renderFilms(filmCard, FILMS_RATED_LIST, this.#filmsTopRatedContainer);
-      this.#renderFilms(filmCard, FILMS_COMMENTED_LIST, this.#filmsMostCommentedContainer);
+      this.#renderFilms(filmCard, Films.RATED_LIST, this.#filmsTopRatedContainer);
+      this.#renderFilms(filmCard, Films.COMMENTED_LIST, this.#filmsMostCommentedContainer);
     }
 
     this.#renderFilmAmount(this.#filmsCards);
@@ -127,14 +129,18 @@ export default class FilmsPresenter {
   #clearFilmList = () => {
     this.#filmPresenter.forEach((presenter) => presenter.destroy());
     this.#filmPresenter.clear();
-    this.#renderedFilmCount = FILM_COUNT_PER_STEP;
+    this.#renderedFilmCount = Films.COUNT_PER_STEP;
     remove(this.#showMoreButtonComponent);
   };
 
-  #onShowMoreButtonClick = () => {
-    this.#renderFilmsCardsPerStep(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
+  #onModeChange = () => {
+    this.#filmPresenter.forEach((presenter) => presenter.resetView());
+  };
 
-    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+  #onShowMoreButtonClick = () => {
+    this.#renderFilmsCardsPerStep(this.#renderedFilmCount, this.#renderedFilmCount + Films.COUNT_PER_STEP);
+
+    this.#renderedFilmCount += Films.COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= this.#filmsCards.length) {
       remove(this.#showMoreButtonComponent);
