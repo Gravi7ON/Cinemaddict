@@ -78,7 +78,7 @@ const createPopupTemplate = (popup) => {
 
           <section class="film-details__controls">
             <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watched" id="watched" name="watched">Already watched</button>
             <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
           </section>
         </div>
@@ -198,16 +198,19 @@ export default class PopupView extends AbstractView {
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
     this._callback.watchlistClick();
+    evt.target.classList.toggle('film-details__control-button--active');
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
     this._callback.watchedClick();
+    evt.target.classList.toggle('film-details__control-button--active');
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
+    evt.target.classList.toggle('film-details__control-button--active');
   };
 
   setButtonCloseElementClick = (callback) => {
