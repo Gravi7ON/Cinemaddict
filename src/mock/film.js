@@ -1,4 +1,5 @@
 import {getRandomPositiveInteger, getRandomPositiveFloat} from '../utils/common.js';
+import {nanoid} from 'nanoid';
 
 const createTitle = () => {
   const titles = [
@@ -105,7 +106,7 @@ const getDate = () => {
 };
 
 export const createFilm = () => ({
-  'id': getRandomPositiveInteger(0, 10),
+  'id': nanoid(),
   'comments': createComment(),
   'film_info': {
     'title': createTitle(),

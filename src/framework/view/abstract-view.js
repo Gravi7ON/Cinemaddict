@@ -46,8 +46,12 @@ export default class AbstractView {
 
   /** Метод для удаления элемента */
   removeElement() {
-    this.#element = null;
+    if (this.#element) {
+      this.#element.remove();
+      this.#element = null;
+    }
   }
+
 
   /**
    * Метод, реализующий эффект "покачивания головой"
