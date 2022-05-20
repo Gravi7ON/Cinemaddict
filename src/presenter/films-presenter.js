@@ -38,6 +38,8 @@ export default class FilmsPresenter {
   #filmsMostCommentedList = new FilmsMostCommentedListView();
   #showMoreButtonComponent = new ButtonShowMoreView();
   #filmPresenter = new Map();
+  #filmRatedPresenter = new Map();
+  #filmCommentedPresenter = new Map();
 
   constructor(boardContainer, filmsModel) {
     this.#boardContainer = boardContainer;
@@ -83,6 +85,17 @@ export default class FilmsPresenter {
   #renderFilms = (card, typeList, typeContainer) => {
     const filmPresenter = new FilmPresenter(typeContainer, this.#onFilmCardChange, this.#onModeChange);
     filmPresenter.init(card, typeList);
+
+    if (typeList === Films.RATED_LIST) {
+      this.#filmRatedPresenter.set(card.id, filmPresenter);
+      return;
+    }
+
+    if (typeList === Films.COMMENTED_LIST) {
+      this.#filmCommentedPresenter.set(card.id, filmPresenter);
+      return;
+    }
+
     this.#filmPresenter.set(card.id, filmPresenter);
   };
 
@@ -135,6 +148,8 @@ export default class FilmsPresenter {
 
   #onModeChange = () => {
     this.#filmPresenter.forEach((presenter) => presenter.resetView());
+    this.#filmRatedPresenter.forEach((presenter) => presenter.resetView());
+    this.#filmCommentedPresenter.forEach((presenter) => presenter.resetView());
   };
 
   #onShowMoreButtonClick = () => {

@@ -63,6 +63,7 @@ export default class FilmPresenter {
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
       this.#closePopupOnButtonClick();
+      this.#bodyContentElement.classList.add('hide-overflow');
     }
   };
 
@@ -99,6 +100,10 @@ export default class FilmPresenter {
     render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
     this.#bodyContentElement.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
+
+    if (this.#mode === Mode.POPUP) {
+      return;
+    }
 
     this.#changeMode();
     this.#mode = Mode.POPUP;
