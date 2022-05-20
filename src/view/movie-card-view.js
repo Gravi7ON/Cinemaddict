@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 import AbstractView from '../framework/view/abstract-view.js';
-import {formatDate, getShortDescription} from '../utils/film.js';
+import {formatDate, getShortDescription, toggleButtonStyle} from '../utils/film.js';
+
+const classStyleButtonsCard = 'film-card__controls-item--active';
 
 const createMovieCardTemplate = (film) => {
   const {film_info, comments} = film;
@@ -51,19 +53,19 @@ export default class MovieCardView extends AbstractView {
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
     this._callback.watchlistClick();
-    evt.target.classList.toggle('film-card__controls-item--active');
+    toggleButtonStyle(evt, classStyleButtonsCard);
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
     this._callback.watchedClick();
-    evt.target.classList.toggle('film-card__controls-item--active');
+    toggleButtonStyle(evt, classStyleButtonsCard);
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
-    evt.target.classList.toggle('film-card__controls-item--active');
+    toggleButtonStyle(evt, classStyleButtonsCard);
   };
 
   setElementClick = (callback) => {

@@ -10,4 +10,6 @@ const getShortDescription = (description) => {
   return description.trim();
 };
 
-export {formatDate, getShortDescription};
+const toggleButtonStyle = (evt, styleClass) => evt.target.classList.toggle(styleClass);
+
+export {formatDate, getShortDescription, toggleButtonStyle};

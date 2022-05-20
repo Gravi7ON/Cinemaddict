@@ -1,8 +1,9 @@
 /* eslint-disable camelcase */
 import AbstractView from '../framework/view/abstract-view.js';
-import {formatDate, getShortDescription} from '../utils/film.js';
+import {formatDate, getShortDescription, toggleButtonStyle} from '../utils/film.js';
 
 const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
+const classStyleButtonsPopup = 'film-details__control-button--active';
 
 const createPopupTemplate = (popup) => {
   const {film_info, comments} = popup;
@@ -198,19 +199,19 @@ export default class PopupView extends AbstractView {
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
     this._callback.watchlistClick();
-    evt.target.classList.toggle('film-details__control-button--active');
+    toggleButtonStyle(evt, classStyleButtonsPopup);
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
     this._callback.watchedClick();
-    evt.target.classList.toggle('film-details__control-button--active');
+    toggleButtonStyle(evt, classStyleButtonsPopup);
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
-    evt.target.classList.toggle('film-details__control-button--active');
+    toggleButtonStyle(evt, classStyleButtonsPopup);
   };
 
   setButtonCloseElementClick = (callback) => {
