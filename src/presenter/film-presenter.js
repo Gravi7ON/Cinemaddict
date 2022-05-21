@@ -1,16 +1,7 @@
 import {RenderPosition, render, remove} from '../framework/render';
+import {Films, Mode} from '../const';
 import MovieCardView from '../view/movie-card-view';
 import PopupView from '../view/popup-view.js';
-
-const Films = {
-  RATED_LIST: 'rated',
-  COMMENTED_LIST: 'commented'
-};
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  POPUP: 'POPUP',
-};
 
 export default class FilmPresenter {
   #filmCardComponent = null;

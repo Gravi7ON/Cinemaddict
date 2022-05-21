@@ -45,6 +45,26 @@ export default class MovieCardView extends AbstractView {
     return createMovieCardTemplate(this.#film);
   }
 
+  setElementClick = (callback) => {
+    this._callback.cardClick = callback;
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#onClick);
+  };
+
+  setWatchlistElementClick = (callback) => {
+    this._callback.watchlistClick = callback;
+    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#onWatchlistClick);
+  };
+
+  setWatchedElementClick = (callback) => {
+    this._callback.watchedClick = callback;
+    this.element.querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this.#onWatchedClick);
+  };
+
+  setFavoriteElementClick = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element.querySelector('.film-card__controls-item--favorite').addEventListener('click', this.#onFavoriteClick);
+  };
+
   #onClick = (evt) => {
     evt.preventDefault();
     this._callback.cardClick();
@@ -66,25 +86,5 @@ export default class MovieCardView extends AbstractView {
     evt.preventDefault();
     this._callback.favoriteClick();
     toggleButtonStyle(evt, classStyleButtonsCard);
-  };
-
-  setElementClick = (callback) => {
-    this._callback.cardClick = callback;
-    this.element.querySelector('.film-card__link').addEventListener('click', this.#onClick);
-  };
-
-  setWatchlistElementClick = (callback) => {
-    this._callback.watchlistClick = callback;
-    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#onWatchlistClick);
-  };
-
-  setWatchedElementClick = (callback) => {
-    this._callback.watchedClick = callback;
-    this.element.querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this.#onWatchedClick);
-  };
-
-  setFavoriteElementClick = (callback) => {
-    this._callback.favoriteClick = callback;
-    this.element.querySelector('.film-card__controls-item--favorite').addEventListener('click', this.#onFavoriteClick);
   };
 }
