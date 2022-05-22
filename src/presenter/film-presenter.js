@@ -1,16 +1,7 @@
 import {RenderPosition, render, remove} from '../framework/render';
+import {Films, Mode} from '../const';
 import MovieCardView from '../view/movie-card-view';
 import PopupView from '../view/popup-view.js';
-
-const Films = {
-  RATED_LIST: 'rated',
-  COMMENTED_LIST: 'commented'
-};
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  POPUP: 'POPUP',
-};
 
 export default class FilmPresenter {
   #filmCardComponent = null;
@@ -63,6 +54,7 @@ export default class FilmPresenter {
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
       this.#closePopupOnButtonClick();
+      this.#bodyContentElement.classList.add('hide-overflow');
     }
   };
 
@@ -99,6 +91,10 @@ export default class FilmPresenter {
     render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
     this.#bodyContentElement.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
+
+    if (this.#mode === Mode.POPUP) {
+      return;
+    }
 
     this.#changeMode();
     this.#mode = Mode.POPUP;

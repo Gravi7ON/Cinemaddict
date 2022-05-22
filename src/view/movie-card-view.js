@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 import AbstractView from '../framework/view/abstract-view.js';
-import {formatDate, getShortDescription} from '../utils/film.js';
+import {formatDate, getShortDescription, toggleButtonStyle} from '../utils/film.js';
+
+const classStyleButtonsCard = 'film-card__controls-item--active';
 
 const createMovieCardTemplate = (film) => {
   const {film_info, comments} = film;
@@ -43,29 +45,6 @@ export default class MovieCardView extends AbstractView {
     return createMovieCardTemplate(this.#film);
   }
 
-  #onClick = (evt) => {
-    evt.preventDefault();
-    this._callback.cardClick();
-  };
-
-  #onWatchlistClick = (evt) => {
-    evt.preventDefault();
-    this._callback.watchlistClick();
-    evt.target.classList.toggle('film-card__controls-item--active');
-  };
-
-  #onWatchedClick = (evt) => {
-    evt.preventDefault();
-    this._callback.watchedClick();
-    evt.target.classList.toggle('film-card__controls-item--active');
-  };
-
-  #onFavoriteClick = (evt) => {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-    evt.target.classList.toggle('film-card__controls-item--active');
-  };
-
   setElementClick = (callback) => {
     this._callback.cardClick = callback;
     this.element.querySelector('.film-card__link').addEventListener('click', this.#onClick);
@@ -84,5 +63,28 @@ export default class MovieCardView extends AbstractView {
   setFavoriteElementClick = (callback) => {
     this._callback.favoriteClick = callback;
     this.element.querySelector('.film-card__controls-item--favorite').addEventListener('click', this.#onFavoriteClick);
+  };
+
+  #onClick = (evt) => {
+    evt.preventDefault();
+    this._callback.cardClick();
+  };
+
+  #onWatchlistClick = (evt) => {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+    toggleButtonStyle(evt, classStyleButtonsCard);
+  };
+
+  #onWatchedClick = (evt) => {
+    evt.preventDefault();
+    this._callback.watchedClick();
+    toggleButtonStyle(evt, classStyleButtonsCard);
+  };
+
+  #onFavoriteClick = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+    toggleButtonStyle(evt, classStyleButtonsCard);
   };
 }

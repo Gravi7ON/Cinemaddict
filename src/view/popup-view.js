@@ -1,8 +1,9 @@
 /* eslint-disable camelcase */
 import AbstractView from '../framework/view/abstract-view.js';
-import {formatDate, getShortDescription} from '../utils/film.js';
+import {formatDate, getShortDescription, toggleButtonStyle} from '../utils/film.js';
 
 const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
+const classStyleButtonsPopup = 'film-details__control-button--active';
 
 const createPopupTemplate = (popup) => {
   const {film_info, comments} = popup;
@@ -190,29 +191,6 @@ export default class PopupView extends AbstractView {
     return createPopupTemplate(this.#popup);
   }
 
-  #onClick = (evt) => {
-    evt.preventDefault();
-    this._callback.click();
-  };
-
-  #onWatchlistClick = (evt) => {
-    evt.preventDefault();
-    this._callback.watchlistClick();
-    evt.target.classList.toggle('film-details__control-button--active');
-  };
-
-  #onWatchedClick = (evt) => {
-    evt.preventDefault();
-    this._callback.watchedClick();
-    evt.target.classList.toggle('film-details__control-button--active');
-  };
-
-  #onFavoriteClick = (evt) => {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-    evt.target.classList.toggle('film-details__control-button--active');
-  };
-
   setButtonCloseElementClick = (callback) => {
     this._callback.click = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#onClick);
@@ -231,5 +209,28 @@ export default class PopupView extends AbstractView {
   setFavoriteElementClick = (callback) => {
     this._callback.favoriteClick = callback;
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#onFavoriteClick);
+  };
+
+  #onClick = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
+
+  #onWatchlistClick = (evt) => {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+    toggleButtonStyle(evt, classStyleButtonsPopup);
+  };
+
+  #onWatchedClick = (evt) => {
+    evt.preventDefault();
+    this._callback.watchedClick();
+    toggleButtonStyle(evt, classStyleButtonsPopup);
+  };
+
+  #onFavoriteClick = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+    toggleButtonStyle(evt, classStyleButtonsPopup);
   };
 }
