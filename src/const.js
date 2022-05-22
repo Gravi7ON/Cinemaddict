@@ -1,8 +1,9 @@
 const Films = {
-  COUNT_PER_STEP: 5,
   RATED_LIST: 'rated',
   COMMENTED_LIST: 'commented'
 };
+
+const FILMS_COUNT_PER_STEP = 5;
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -15,4 +16,4 @@ const SortType = {
   RATING: 'rating',
 };
 
-export {Films, Mode, SortType};
+export {Films, Mode, SortType, FILMS_COUNT_PER_STEP};

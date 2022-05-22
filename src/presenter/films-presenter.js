@@ -13,13 +13,13 @@ import FilmPresenter from './film-presenter.js';
 import {render, remove} from '../framework/render.js';
 import {updateItem} from '../utils/common.js';
 import {sortFilmsDate, sortFilmsRating} from '../utils/film.js';
-import {Films, SortType} from '../const.js';
+import {Films, SortType, FILMS_COUNT_PER_STEP} from '../const.js';
 
 export default class FilmsPresenter {
   #boardContainer = null;
   #filmsModel = null;
   #filmsCards = [];
-  #renderedFilmCount = Films.COUNT_PER_STEP;
+  #renderedFilmCount = FILMS_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
   #sourcedFilms = [];
 
@@ -100,13 +100,13 @@ export default class FilmsPresenter {
   };
 
   #renderCommonFilms = () => {
-    const totalFilmsAvailable = Math.min(this.#filmsCards.length, Films.COUNT_PER_STEP);
+    const totalFilmsAvailable = Math.min(this.#filmsCards.length, FILMS_COUNT_PER_STEP);
 
     for (let i = 0; i < totalFilmsAvailable; i++) {
       this.#renderFilm(this.#filmsCards[i], null, this.#filmsContainer);
     }
 
-    if (this.#filmsCards.length > Films.COUNT_PER_STEP) {
+    if (this.#filmsCards.length > FILMS_COUNT_PER_STEP) {
       this.#renderShowMoreButton();
     }
   };
@@ -146,7 +146,7 @@ export default class FilmsPresenter {
   #clearFilmList = () => {
     this.#filmPresenter.forEach((presenter) => presenter.destroy());
     this.#filmPresenter.clear();
-    this.#renderedFilmCount = Films.COUNT_PER_STEP;
+    this.#renderedFilmCount = FILMS_COUNT_PER_STEP;
     remove(this.#showMoreButtonComponent);
   };
 
@@ -157,9 +157,9 @@ export default class FilmsPresenter {
   };
 
   #onShowMoreButtonClick = () => {
-    this.#renderFilmsCardsPerStep(this.#renderedFilmCount, this.#renderedFilmCount + Films.COUNT_PER_STEP);
+    this.#renderFilmsCardsPerStep(this.#renderedFilmCount, this.#renderedFilmCount + FILMS_COUNT_PER_STEP);
 
-    this.#renderedFilmCount += Films.COUNT_PER_STEP;
+    this.#renderedFilmCount += FILMS_COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= this.#filmsCards.length) {
       remove(this.#showMoreButtonComponent);
