@@ -158,15 +158,13 @@ const createPopupTemplate = (popup) => {
 };
 
 export default class PopupView extends AbstractStatefulView {
-  #popup = null;
-
   constructor(popup) {
     super();
-    this.#popup = popup;
+    this._state = PopupView.convertPopupToState(popup);
   }
 
   get template() {
-    return createPopupTemplate(this.#popup);
+    return createPopupTemplate(this._state);
   }
 
   setButtonCloseElementClick = (callback) => {
@@ -193,9 +191,9 @@ export default class PopupView extends AbstractStatefulView {
     this.element.querySelector('.film-details__inner').addEventListener('change', this.#onEmotionButtonClick);
   };
 
-  _restoreHandlers = () => {
+  // _restoreHandlers = () => {
 
-  };
+  // };
 
   #onClick = (evt) => {
     evt.preventDefault();
@@ -232,6 +230,27 @@ export default class PopupView extends AbstractStatefulView {
       userEmoji.style.visibility = 'visible';
       hiddenField.value = evt.target.value;
       this.element.scrollTo(0, this.element.scrollHeight);
+      // this.updateElement({
+      //   localComment: {
+      //     comment: `${this.element.querySelector('.film-details__comment-input').value}`,
+      //     emotion: `${hiddenField.value}`
+      //   }
+      // });
     }
+  };
+
+  static convertPopupToState = (popup) => ({...popup,
+    localComment: {
+      comment: '',
+      emotion: ''
+    }
+  });
+
+  static convertStateToPopup = (state) => {
+    const popup = {...state};
+
+    delete popup.localComment;
+
+    return popup;
   };
 }
