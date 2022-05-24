@@ -87,6 +87,7 @@ export default class FilmPresenter {
     this.#popupComponent.setWatchlistElementClick(this.#onWatchlistClick);
     this.#popupComponent.setWatchedElementClick(this.#onWatchedClick);
     this.#popupComponent.setFavoriteElementClick(this.#onFavoriteClick);
+    this.#popupComponent.setEmotionElementChange();
 
     render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
     this.#bodyContentElement.classList.add('hide-overflow');

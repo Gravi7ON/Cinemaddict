@@ -111,7 +111,7 @@ export const createFilm = () => ({
   'film_info': {
     'title': createTitle(),
     'alternative_title': 'Laziness Who Sold Themselves',
-    'total_rating': getRandomPositiveFloat(1, 10),
+    'total_rating': getRandomPositiveFloat(1, 10, 2),
     'poster': `images/posters/${createImageAddress()}.jpg`,
     'age_rating': createAgeRating(),
     'director': 'Tom Ford',
