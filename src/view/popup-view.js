@@ -1,16 +1,34 @@
 /* eslint-disable camelcase */
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {formatDate, getShortDescription, toggleButtonStyle} from '../utils/film.js';
 
-const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
 const classStyleButtonsPopup = 'film-details__control-button--active';
 
+const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
+
+const createCommentsTemplate = (comments) => {
+  const commentDate = (currentDate) => formatDate(currentDate).format('YYYY/MM/DD hh:mm');
+  return comments.reduce((previous, current) =>
+    `${previous}<li class="film-details__comment">
+    <span class="film-details__comment-emoji">
+      <img src="./images/emoji/${current.emotion}.png" width="55" height="55" alt="emoji-${current.emotion}">
+    </span>
+    <div>
+    <p class="film-details__comment-text">${current.comment}</p>
+    <p class="film-details__comment-info">
+      <span class="film-details__comment-author">${current.author}</span>
+      <span class="film-details__comment-day">${commentDate(current.date)}</span>
+      <button class="film-details__comment-delete">Delete</button>
+    </p>
+    </div>
+  </li>`, '');
+};
+
 const createPopupTemplate = (popup) => {
-  const {film_info, comments} = popup;
+  const {film_info, comments, localComment} = popup;
   const durationHours = Math.floor(film_info.runtime / 60);
   const durationMunutes = film_info.runtime - 60 * durationHours;
   const releaseDate = formatDate(film_info.release.date).format('D MMM YYYY');
-  const commentDate = formatDate(comments[0].date).format('YYYY/MM/DD hh:mm');
 
   return (
     `<section class="film-details">
@@ -89,65 +107,17 @@ const createPopupTemplate = (popup) => {
             <h3 class="film-details__comments-title">${comments.length > 1 ? 'Comments' : 'Comment'} <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-              <li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                  <img src="./images/emoji/${comments[0].emotion}.png" width="55" height="55" alt="emoji-smile">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">${comments[0].comment}</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">${comments[0].author}</span>
-                    <span class="film-details__comment-day">${commentDate}</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-              </li>
-              <li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                <img src="./images/emoji/sleeping.png" width="55" height="55" alt="emoji-sleeping">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">Booooooooooring</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">John Doe</span>
-                    <span class="film-details__comment-day">2 days ago</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-              </li>
-              <li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                  <img src="./images/emoji/puke.png" width="55" height="55" alt="emoji-puke">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">Very very old. Meh</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">John Doe</span>
-                    <span class="film-details__comment-day">2 days ago</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-              </li>
-              <li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                  <img src="./images/emoji/angry.png" width="55" height="55" alt="emoji-angry">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">Almost two hours? Seriously?</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">John Doe</span>
-                    <span class="film-details__comment-day">Today</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-              </li>
+              ${createCommentsTemplate(comments)}
             </ul>
 
             <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
+              <div class="film-details__add-emoji-label">
+                <img width="55" height="55" style="visibility: hidden">
+                <input type="hidden" name="user-emoji" value="">
+              </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${localComment.comment}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -179,16 +149,14 @@ const createPopupTemplate = (popup) => {
   );
 };
 
-export default class PopupView extends AbstractView {
-  #popup = null;
-
+export default class PopupView extends AbstractStatefulView {
   constructor(popup) {
     super();
-    this.#popup = popup;
+    this._state = PopupView.convertPopupToState(popup);
   }
 
   get template() {
-    return createPopupTemplate(this.#popup);
+    return createPopupTemplate(this._state);
   }
 
   setButtonCloseElementClick = (callback) => {
@@ -209,6 +177,29 @@ export default class PopupView extends AbstractView {
   setFavoriteElementClick = (callback) => {
     this._callback.favoriteClick = callback;
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#onFavoriteClick);
+  };
+
+  setEmotionElementChange = () => {
+    this.element.querySelector('.film-details__inner').addEventListener('change', this.#onEmotionButtonClick);
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', (evt) => {
+      evt.preventDefault();
+      const hiddenField = this.element.querySelector('input[type="hidden"]');
+
+      this._setState({
+        localComment: {
+          comment: `${evt.target.value}`,
+          emotion: `${hiddenField.value}`
+        }
+      });
+    });
+  };
+
+  _restoreHandlers = () => {
+    this.setButtonCloseElementClick(this._callback.click);
+    this.setWatchlistElementClick(this._callback.watchlistClick);
+    this.setWatchedElementClick(this._callback.watchedClick);
+    this.setFavoriteElementClick(this._callback.favoriteClick);
+    this.setEmotionElementChange();
   };
 
   #onClick = (evt) => {
@@ -232,5 +223,42 @@ export default class PopupView extends AbstractView {
     evt.preventDefault();
     this._callback.favoriteClick();
     toggleButtonStyle(evt, classStyleButtonsPopup);
+  };
+
+  #onEmotionButtonClick = (evt) => {
+    evt.preventDefault();
+
+    if (evt.target.matches('input[type="radio"]')) {
+      const userEmotionContainer = this.element.querySelector('.film-details__add-emoji-label');
+      const userEmoji = userEmotionContainer.querySelector('img');
+      const userComment = this.element.querySelector('.film-details__comment-input');
+      const hiddenField = userEmotionContainer.querySelector('input');
+      userEmoji.setAttribute('src', `images/emoji/${evt.target.value}.png`);
+      userEmoji.setAttribute('alt', `emoji-${evt.target.value}`);
+      userEmoji.style.visibility = 'visible';
+      hiddenField.value = evt.target.value;
+      this._setState({
+        localComment: {
+          emotion: `${evt.target.value}`,
+          comment: `${userComment.value}`,
+        }
+      });
+      this.element.scrollTo(0, this.element.scrollHeight);
+    }
+  };
+
+  static convertPopupToState = (popup) => ({...popup,
+    localComment: {
+      comment: '',
+      emotion: ''
+    }
+  });
+
+  static convertStateToPopup = (state) => {
+    const popup = {...state};
+
+    delete popup.localComment;
+
+    return popup;
   };
 }

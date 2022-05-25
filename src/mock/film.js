@@ -89,7 +89,7 @@ const createComment = () => {
     'date': '2019-05-11T16:12:32.554Z',
     'emotion': emotions[getRandomPositiveInteger(0, emotions.length - 1)]
   });
-  return Array.from({length: getRandomPositiveInteger(2, 5)}, getComment);
+  return Array.from({length: getRandomPositiveInteger(1, 5)}, getComment);
 };
 
 const getDate = () => {
@@ -111,7 +111,7 @@ export const createFilm = () => ({
   'film_info': {
     'title': createTitle(),
     'alternative_title': 'Laziness Who Sold Themselves',
-    'total_rating': getRandomPositiveFloat(1, 10),
+    'total_rating': getRandomPositiveFloat(1, 10, 2),
     'poster': `images/posters/${createImageAddress()}.jpg`,
     'age_rating': createAgeRating(),
     'director': 'Tom Ford',
