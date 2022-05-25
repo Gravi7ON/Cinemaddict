@@ -5,35 +5,27 @@ import {formatDate, getShortDescription, toggleButtonStyle} from '../utils/film.
 const classStyleButtonsPopup = 'film-details__control-button--active';
 
 const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
+
 const createCommentsTemplate = (comments) => {
-  const createdComments = [];
-
-  for (const comment of comments) {
-    const commentDate = formatDate(comment.date).format('YYYY/MM/DD hh:mm');
-    const createdComment = (
-      `<li class="film-details__comment">
-        <span class="film-details__comment-emoji">
-          <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
-        </span>
-        <div>
-         <p class="film-details__comment-text">${comment.comment}</p>
-         <p class="film-details__comment-info">
-          <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${commentDate}</span>
-          <button class="film-details__comment-delete">Delete</button>
-         </p>
-        </div>
-      </li>`
-    );
-
-    createdComments.push(createdComment);
-  }
-
-  return createdComments.join('');
+  const commentDate = (currentDate) => formatDate(currentDate).format('YYYY/MM/DD hh:mm');
+  return comments.reduce((previous, current) =>
+    `${previous}<li class="film-details__comment">
+    <span class="film-details__comment-emoji">
+      <img src="./images/emoji/${current.emotion}.png" width="55" height="55" alt="emoji-${current.emotion}">
+    </span>
+    <div>
+    <p class="film-details__comment-text">${current.comment}</p>
+    <p class="film-details__comment-info">
+      <span class="film-details__comment-author">${current.author}</span>
+      <span class="film-details__comment-day">${commentDate(current.date)}</span>
+      <button class="film-details__comment-delete">Delete</button>
+    </p>
+    </div>
+  </li>`, '');
 };
 
 const createPopupTemplate = (popup) => {
-  const {film_info, comments} = popup;
+  const {film_info, comments, localComment} = popup;
   const durationHours = Math.floor(film_info.runtime / 60);
   const durationMunutes = film_info.runtime - 60 * durationHours;
   const releaseDate = formatDate(film_info.release.date).format('D MMM YYYY');
@@ -120,12 +112,12 @@ const createPopupTemplate = (popup) => {
 
             <div class="film-details__new-comment">
               <div class="film-details__add-emoji-label">
-                <img width="55" height="55" style="visibility: hidden">
-                <input type="hidden" name="user-emoji" value="absent">
+                <img src="images/emoji/${localComment.emotion}.png" width="55" height="55" style="visibility: hidden" alt="emoji-${localComment.emotion}">
+                <input type="hidden" name="user-emoji" value="">
               </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${localComment.comment}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -189,11 +181,23 @@ export default class PopupView extends AbstractStatefulView {
 
   setEmotionElementChange = () => {
     this.element.querySelector('.film-details__inner').addEventListener('change', this.#onEmotionButtonClick);
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', (evt) => {
+      evt.preventDefault();
+      this.updateElement({
+        localComment: {
+          comment: `${evt.target.value}`
+        }
+      });
+    });
   };
 
-  // _restoreHandlers = () => {
-
-  // };
+  _restoreHandlers = () => {
+    this.setButtonCloseElementClick(this._callback.click);
+    this.setWatchlistElementClick(this._callback.watchlistClick);
+    this.setWatchedElementClick(this._callback.watchedClick);
+    this.setFavoriteElementClick(this._callback.favoriteClick);
+    this.setEmotionElementChange();
+  };
 
   #onClick = (evt) => {
     evt.preventDefault();
@@ -225,17 +229,13 @@ export default class PopupView extends AbstractStatefulView {
       const userEmotionContainer = this.element.querySelector('.film-details__add-emoji-label');
       const userEmoji = userEmotionContainer.querySelector('img');
       const hiddenField = userEmotionContainer.querySelector('input');
-      userEmoji.setAttribute('src', `images/emoji/${evt.target.value}.png`);
-      userEmoji.setAttribute('alt', `emoji-${evt.target.value}`);
       userEmoji.style.visibility = 'visible';
       hiddenField.value = evt.target.value;
-      this.element.scrollTo(0, this.element.scrollHeight);
-      // this.updateElement({
-      //   localComment: {
-      //     comment: `${this.element.querySelector('.film-details__comment-input').value}`,
-      //     emotion: `${hiddenField.value}`
-      //   }
-      // });
+      this.updateElement({
+        localComment: {
+          emotion: `${hiddenField.value}`
+        }
+      });
     }
   };
 
