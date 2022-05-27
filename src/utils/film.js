@@ -1,4 +1,6 @@
 import dayjs from 'dayjs';
+import * as relativeTime from 'dayjs/plugin/relativeTime.js';
+dayjs.extend(relativeTime);
 
 const formatDate = (date) => dayjs(date);
 

@@ -7,7 +7,7 @@ const classStyleButtonsPopup = 'film-details__control-button--active';
 const createGenreTemplate = (genres) => genres.reduce((previous, current) => `${previous}<span class="film-details__genre">${current}</span>`, '');
 
 const createCommentsTemplate = (comments) => {
-  const commentDate = (currentDate) => formatDate(currentDate).format('YYYY/MM/DD hh:mm');
+  const commentDate = (currentDate) => formatDate(currentDate).fromNow();
   return comments.reduce((previous, current) =>
     `${previous}<li class="film-details__comment">
     <span class="film-details__comment-emoji">
