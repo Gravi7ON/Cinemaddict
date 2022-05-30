@@ -1,5 +1,5 @@
 import {RenderPosition, render, remove} from '../framework/render';
-import {Films, Mode} from '../const';
+import {Films, Mode, UpdateType, UserAction} from '../const';
 import MovieCardView from '../view/movie-card-view';
 import PopupView from '../view/popup-view.js';
 
@@ -59,21 +59,27 @@ export default class FilmPresenter {
   };
 
   #onWatchlistClick = () => {
-    this.#changeData({
-      ...this.#film,
-      'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}});
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film,
+        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}});
   };
 
   #onWatchedClick = () => {
-    this.#changeData({
-      ...this.#film,
-      'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}});
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film,
+        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}});
   };
 
   #onFavoriteClick = () => {
-    this.#changeData({
-      ...this.#film,
-      'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film,
+        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
   };
 
   #renderPopupOnCardClick = () => {

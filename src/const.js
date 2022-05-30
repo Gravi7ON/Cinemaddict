@@ -16,4 +16,15 @@ const SortType = {
   RATING: 'rating',
 };
 
-export {Films, Mode, SortType, FILMS_COUNT_PER_STEP};
+const UserAction = {
+  UPDATE_FILM: 'UPDATE_FILM',
+  DELETE_FILM: 'DELETE_FILMS',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export {Films, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction};
