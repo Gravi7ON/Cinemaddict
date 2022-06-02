@@ -8,13 +8,13 @@ const FILMS_COUNT_PER_STEP = 5;
 
 const Mode = {
   DEFAULT: 'DEFAULT',
-  POPUP: 'POPUP',
+  POPUP: 'POPUP'
 };
 
 const SortType = {
   DEFAULT: 'default',
   DATE: 'date',
-  RATING: 'rating',
+  RATING: 'rating'
 };
 
 const UserAction = {
@@ -24,7 +24,14 @@ const UserAction = {
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
-  MAJOR: 'MAJOR',
+  MAJOR: 'MAJOR'
 };
 
-export {Films, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction};
+const FilterType = {
+  ALL: 'all',
+  WATCH_LIST: 'watch',
+  WATCHED: 'watched',
+  FAVORITES: 'favorites'
+};
+
+export {Films, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType};

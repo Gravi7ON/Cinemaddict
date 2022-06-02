@@ -7,12 +7,11 @@ import FilmsContainerView from '../view/films-container-view.js';
 import ButtonShowMoreView from '../view/button-show-more-view.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import UserProfileView from '../view/user-profile-view.js';
-import FilterMenuView from '../view/filter-menu-view.js';
 import FilmAmountView from '../view/film-amount-view.js';
 import FilmPresenter from './film-presenter.js';
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortFilmsDate, sortFilmsRating} from '../utils/film.js';
-import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction} from '../const.js';
+import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType} from '../const.js';
 
 export default class FilmsPresenter {
   #boardContainer = null;
@@ -74,11 +73,6 @@ export default class FilmsPresenter {
     render(this.#userProfile, this.#userProfileElement);
   };
 
-  #renderFilterMenu = (filmsCards, position) => {
-    this.#filterMenu = new FilterMenuView(filmsCards);
-    render(this.#filterMenu, this.#boardContainer, position);
-  };
-
   #renderSortMenu = (position) => {
     this.#sortMenuComponent = new SortMenuView(this.#currentSortType);
     this.#sortMenuComponent.setSortTypeElementClick(this.#onSortTypeChange);
@@ -99,7 +93,6 @@ export default class FilmsPresenter {
   };
 
   #renderNoFilms = (filmsCards) => {
-    this.#renderFilterMenu(filmsCards);
     render(this.#filmsBoard, this.#boardContainer);
     render(new FilmsListEmptyView(), this.#filmsBoard.element);
     this.#renderFilmAmount(filmsCards);
@@ -131,7 +124,6 @@ export default class FilmsPresenter {
     const films = this.films.slice(0, Math.min(filmCount, this.#renderedFilmCount));
 
     this.#renderUserProfile();
-    this.#renderFilterMenu(this.films);
     this.#renderFilms(films);
     render(this.#filmsBoard, this.#boardContainer);
     this.#renderSortMenu(RenderPosition.BEFOREBEGIN);
