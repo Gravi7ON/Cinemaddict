@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {formatDate, getShortDescription, toggleButtonStyle} from '../utils/film.js';
+import {formatDate, getShortDescription} from '../utils/film.js';
 
 const classStyleButtonsPopup = 'film-details__control-button--active';
 
@@ -25,7 +25,7 @@ const createCommentsTemplate = (comments) => {
 };
 
 const createPopupTemplate = (popup) => {
-  const {film_info, comments, localComment} = popup;
+  const {film_info, comments, localComment, user_details} = popup;
   const durationHours = Math.floor(film_info.runtime / 60);
   const durationMunutes = film_info.runtime - 60 * durationHours;
   const releaseDate = formatDate(film_info.release.date).format('D MMM YYYY');
@@ -96,9 +96,9 @@ const createPopupTemplate = (popup) => {
           </div>
 
           <section class="film-details__controls">
-            <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button" class="film-details__control-button film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-            <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watchlist ${user_details.watchlist ? classStyleButtonsPopup : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watched ${user_details.already_watched ? classStyleButtonsPopup : ''}" id="watched" name="watched">Already watched</button>
+            <button type="button" class="film-details__control-button film-details__control-button--favorite ${user_details.favorite ? classStyleButtonsPopup : ''}" id="favorite" name="favorite">Add to favorites</button>
           </section>
         </div>
 
@@ -210,19 +210,16 @@ export default class PopupView extends AbstractStatefulView {
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
     this._callback.watchlistClick();
-    toggleButtonStyle(evt, classStyleButtonsPopup);
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
     this._callback.watchedClick();
-    toggleButtonStyle(evt, classStyleButtonsPopup);
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
-    toggleButtonStyle(evt, classStyleButtonsPopup);
   };
 
   #onEmotionButtonClick = (evt) => {

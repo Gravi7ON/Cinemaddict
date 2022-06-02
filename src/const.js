@@ -1,4 +1,5 @@
 const Films = {
+  COMMON_LIST: 'common',
   RATED_LIST: 'rated',
   COMMENTED_LIST: 'commented'
 };
@@ -17,8 +18,7 @@ const SortType = {
 };
 
 const UserAction = {
-  UPDATE_FILM: 'UPDATE_FILM',
-  DELETE_FILM: 'DELETE_FILMS',
+  UPDATE_FILM: 'UPDATE_FILM'
 };
 
 const UpdateType = {
