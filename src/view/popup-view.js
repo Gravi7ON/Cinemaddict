@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {formatDate, getShortDescription} from '../utils/film.js';
+import he from 'he';
 
 const classStyleButtonsPopup = 'film-details__control-button--active';
 
@@ -14,7 +15,7 @@ const createCommentsTemplate = (comments) => {
       <img src="./images/emoji/${current.emotion}.png" width="55" height="55" alt="emoji-${current.emotion}">
     </span>
     <div>
-    <p class="film-details__comment-text">${current.comment}</p>
+    <p class="film-details__comment-text">${he.encode(current.comment)}</p>
     <p class="film-details__comment-info">
       <span class="film-details__comment-author">${current.author}</span>
       <span class="film-details__comment-day">${commentDate(current.date)}</span>
@@ -117,7 +118,7 @@ const createPopupTemplate = (popup) => {
               </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${localComment.comment}</textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(localComment.comment)}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
