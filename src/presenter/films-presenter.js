@@ -11,7 +11,8 @@ import FilmAmountView from '../view/film-amount-view.js';
 import FilmPresenter from './film-presenter.js';
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortFilmsDate, sortFilmsRating} from '../utils/film.js';
-import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType} from '../const.js';
+import {filter} from '../utils/filter.js';
+import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction} from '../const.js';
 
 export default class FilmsPresenter {
   #boardContainer = null;
@@ -21,6 +22,7 @@ export default class FilmsPresenter {
   #sortMenuComponent = null;
   #showMoreButtonComponent = null;
   #filmsAmount = null;
+  #filterModel = null;
   #renderedFilmCount = FILMS_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
 
@@ -38,22 +40,28 @@ export default class FilmsPresenter {
   #filmRatedPresenter = new Map();
   #filmCommentedPresenter = new Map();
 
-  constructor(boardContainer, filmsModel) {
+  constructor(boardContainer, filmsModel, filterModel) {
     this.#boardContainer = boardContainer;
     this.#filmsModel = filmsModel;
+    this.#filterModel = filterModel;
 
     this.#filmsModel.addObserver(this.#onModelEvent);
+    this.#filterModel.addObserver(this.#onModelEvent);
   }
 
   get films() {
+    const filterType = this.#filterModel.filter;
+    const films = this.#filmsModel.films;
+    const filteredFilms = filter[filterType](films);
+
     switch (this.#currentSortType) {
       case SortType.DATE:
-        return [...this.#filmsModel.films].sort(sortFilmsDate);
+        return filteredFilms.sort(sortFilmsDate);
       case SortType.RATING:
-        return [...this.#filmsModel.films].sort(sortFilmsRating);
+        return filteredFilms.sort(sortFilmsRating);
     }
 
-    return this.#filmsModel.films;
+    return filteredFilms;
   }
 
   init = () => {
@@ -204,6 +212,10 @@ export default class FilmsPresenter {
 
   #onModelEvent = (updateType) => {
     switch (updateType) {
+      case UpdateType.PATCH:
+        this.#clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
+        this.#renderCommonFilms();
+        break;
       case UpdateType.MINOR:
         this.#clearFilmList();
         this.#renderCommonFilms();

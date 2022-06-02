@@ -1,18 +1,21 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {FilterType} from '../const.js';
+import {filter} from '../utils/filter.js';
 
-const createFilterMenuTemplate = (films, currentFilterType) => {
-  const countWatchList = films.filter((item) => item.user_details.watchlist).length;
-  const countHistory = films.filter((item) => item.user_details.already_watched).length;
-  const countFavorites = films.filter((item) => item.user_details.favorite).length;
-
-  return `<nav class="main-navigation">
+const createFilterMenuTemplate = (films, currentFilterType) => (
+  `<nav class="main-navigation">
     <a href="#all" class="main-navigation__item ${currentFilterType === FilterType.ALL ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.ALL}">All movies</a>
-    <a href="#watchlist" class="main-navigation__item ${currentFilterType === FilterType.WATCH_LIST ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.WATCH_LIST}">Watchlist <span class="main-navigation__item-count">${countWatchList}</span></a>
-    <a href="#history" class="main-navigation__item ${currentFilterType === FilterType.WATCHED ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.WATCHED}">History <span class="main-navigation__item-count">${countHistory}</span></a>
-    <a href="#favorites" class="main-navigation__item ${currentFilterType === FilterType.FAVORITES ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.FAVORITES}">Favorites <span class="main-navigation__item-count">${countFavorites}</span></a>
-  </nav>`;
-};
+    <a href="#watchlist" class="main-navigation__item ${currentFilterType === FilterType.WATCH_LIST ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.WATCH_LIST}">Watchlist
+    <span class="main-navigation__item-count" data-filter-type="${FilterType.WATCH_LIST}">${filter[FilterType.WATCH_LIST](films).length}</span>
+    </a>
+    <a href="#history" class="main-navigation__item ${currentFilterType === FilterType.WATCHED ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.WATCHED}">History
+    <span class="main-navigation__item-count" data-filter-type="${FilterType.WATCHED}">${filter[FilterType.WATCHED](films).length}</span>
+    </a>
+    <a href="#favorites" class="main-navigation__item ${currentFilterType === FilterType.FAVORITES ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.FAVORITES}">Favorites
+    <span class="main-navigation__item-count" data-filter-type="${FilterType.FAVORITES}">${filter[FilterType.FAVORITES](films).length}</span>
+    </a>
+  </nav>`
+);
 
 export default class FilterMenuView extends AbstractView {
   #films = null;
@@ -34,7 +37,7 @@ export default class FilterMenuView extends AbstractView {
   };
 
   #filterTypeOnClick = (evt) => {
-    if (evt.target.tagName !== 'A') {
+    if (evt.target.tagName !== 'A' && evt.target.tagName !== 'SPAN') {
       return;
     }
 
