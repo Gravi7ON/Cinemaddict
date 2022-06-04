@@ -4,7 +4,7 @@ import {createFilm} from '../mock/film.js';
 const UPDATE_COUNT = 1;
 
 export default class FilmsModel extends Observable {
-  #films = Array.from({length: 22}, createFilm);
+  #films = Array.from({length: 25}, createFilm);
 
   get films() {
     return this.#films;

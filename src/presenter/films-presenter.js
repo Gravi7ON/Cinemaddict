@@ -72,6 +72,7 @@ export default class FilmsPresenter {
       return;
     }
 
+    this.#renderUserProfile();
     this.#renderCommonFilms();
     this.#renderFilmAmount(this.films);
     // this.#renderFilmsRatedList();
@@ -137,7 +138,6 @@ export default class FilmsPresenter {
     if (filmCount === 0) {
       remove(this.#filmsList);
       this.#renderNoFilms(films);
-      this.#renderUserProfile();
       remove(this.#filmsAmount);
 
       return;
@@ -147,7 +147,6 @@ export default class FilmsPresenter {
     render(this.#filmsBoard, this.#boardContainer);
 
     if (filmCount > 0) {
-      this.#renderUserProfile();
       this.#renderSortMenu(RenderPosition.BEFOREBEGIN);
     }
 
@@ -177,7 +176,7 @@ export default class FilmsPresenter {
     }
   };
 
-  #clearFilmList = ({resetRenderedFilmsCount = false, resetSortType = false} = {}) => {
+  #clearFilmList = ({resetRenderedFilmsCount = false, resetSortType = false, rerenderUserProfile = false} = {}) => {
     const filmCount = this.films.length;
 
     this.#filmPresenter.forEach((presenter) => presenter.destroy());
@@ -186,7 +185,10 @@ export default class FilmsPresenter {
     remove(this.#sortMenuComponent);
     remove(this.#showMoreButtonComponent);
     remove(this.#filterMenu);
-    remove(this.#userProfile);
+
+    if (rerenderUserProfile) {
+      remove(this.#userProfile);
+    }
 
     if (this.#filmsListEmptyComponent) {
       remove(this.#filmsListEmptyComponent);
@@ -232,12 +234,13 @@ export default class FilmsPresenter {
 
   #onModelEvent = (updateType) => {
     switch (updateType) {
-      case UpdateType.PATCH:
+      case UpdateType.PRE_MINOR:
         this.#clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
         this.#renderCommonFilms();
         break;
       case UpdateType.MINOR:
-        this.#clearFilmList();
+        this.#clearFilmList({rerenderUserProfile: true});
+        this.#renderUserProfile();
         this.#renderCommonFilms();
         break;
       case UpdateType.MAJOR:
@@ -252,7 +255,6 @@ export default class FilmsPresenter {
 
     this.#currentSortType = sortType;
     this.#clearFilmList({resetRenderedFilmsCount: true});
-
     this.#renderCommonFilms();
   };
 }

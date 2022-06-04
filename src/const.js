@@ -22,7 +22,7 @@ const UserAction = {
 };
 
 const UpdateType = {
-  PATCH: 'PATCH',
+  PRE_MINOR: 'PRE_MINOR',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR'
 };

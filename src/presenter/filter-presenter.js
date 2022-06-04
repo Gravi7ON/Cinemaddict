@@ -47,6 +47,6 @@ export default class FilterPresenter {
       return;
     }
 
-    this.#filterModel.setFilter(UpdateType.PATCH, filterType);
+    this.#filterModel.setFilter(UpdateType.PRE_MINOR, filterType);
   };
 }
