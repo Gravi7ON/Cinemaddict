@@ -46,6 +46,10 @@ export default class FilmPresenter {
     }
   };
 
+  rerenderPopup = () => {
+    this.#renderPopupOnCardClick();
+  };
+
   destroy = () => {
     remove(this.#filmCardComponent);
     remove(this.#popupComponent);
@@ -56,6 +60,31 @@ export default class FilmPresenter {
       this.#closePopupOnButtonClick();
       this.#bodyContentElement.classList.add('hide-overflow');
     }
+  };
+
+  #renderPopupOnCardClick = () => {
+    if (this.#popupComponent !== null) {
+      this.#popupComponent.removeElement();
+    }
+
+    this.#popupComponent = new PopupView(this.#film);
+
+    this.#popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
+    this.#popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
+    this.#popupComponent.setWatchedElementClick(this.#onPopupWatchedClick);
+    this.#popupComponent.setFavoriteElementClick(this.#onPopupFavoriteClick);
+    this.#popupComponent.setEmotionElementChange();
+
+    render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
+    this.#bodyContentElement.classList.add('hide-overflow');
+    document.addEventListener('keydown', this.#onEscKeyDown);
+
+    if (this.#mode === Mode.POPUP) {
+      return;
+    }
+
+    this.#changeMode();
+    this.#mode = Mode.POPUP;
   };
 
   #onWatchlistClick = () => {
@@ -82,29 +111,28 @@ export default class FilmPresenter {
         'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
   };
 
-  #renderPopupOnCardClick = () => {
-    if (this.#popupComponent !== null) {
-      this.#popupComponent.removeElement();
-    }
+  #onPopupWatchlistClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MAJOR,
+      {...this.#film,
+        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}});
+  };
 
-    this.#popupComponent = new PopupView(this.#film);
+  #onPopupWatchedClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MAJOR,
+      {...this.#film,
+        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}});
+  };
 
-    this.#popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
-    this.#popupComponent.setWatchlistElementClick(this.#onWatchlistClick);
-    this.#popupComponent.setWatchedElementClick(this.#onWatchedClick);
-    this.#popupComponent.setFavoriteElementClick(this.#onFavoriteClick);
-    this.#popupComponent.setEmotionElementChange();
-
-    render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
-    this.#bodyContentElement.classList.add('hide-overflow');
-    document.addEventListener('keydown', this.#onEscKeyDown);
-
-    if (this.#mode === Mode.POPUP) {
-      return;
-    }
-
-    this.#changeMode();
-    this.#mode = Mode.POPUP;
+  #onPopupFavoriteClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MAJOR,
+      {...this.#film,
+        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
   };
 
   #closePopupOnButtonClick = () => {

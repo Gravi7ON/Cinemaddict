@@ -18,10 +18,12 @@ const SortType = {
 };
 
 const UserAction = {
-  UPDATE_FILM: 'UPDATE_FILM'
+  UPDATE_FILM: 'UPDATE_FILM',
+  DELETE_FILM: 'DELETE_FILM',
 };
 
 const UpdateType = {
+  PATCH: 'PATCH',
   PRE_MINOR: 'PRE_MINOR',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR'

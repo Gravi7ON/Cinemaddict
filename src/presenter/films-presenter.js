@@ -80,7 +80,7 @@ export default class FilmsPresenter {
   };
 
   #renderUserProfile = () => {
-    this.#userProfile = new UserProfileView(this.films);
+    this.#userProfile = new UserProfileView(this.#filmsModel.films);
     render(this.#userProfile, this.#userProfileElement);
   };
 
@@ -142,6 +142,7 @@ export default class FilmsPresenter {
 
       return;
     }
+
 
     this.#renderFilms(films);
     render(this.#filmsBoard, this.#boardContainer);
@@ -232,7 +233,7 @@ export default class FilmsPresenter {
     }
   };
 
-  #onModelEvent = (updateType) => {
+  #onModelEvent = (updateType, update) => {
     switch (updateType) {
       case UpdateType.PRE_MINOR:
         this.#clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
@@ -244,6 +245,10 @@ export default class FilmsPresenter {
         this.#renderCommonFilms();
         break;
       case UpdateType.MAJOR:
+        this.#clearFilmList({rerenderUserProfile: true});
+        this.#renderUserProfile();
+        this.#renderCommonFilms();
+        this.#filmPresenter.get(update.id).rerenderPopup();
         break;
     }
   };
