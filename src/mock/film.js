@@ -83,7 +83,7 @@ const createComment = () => {
     'Ilya O\'Reilly'
   ];
   const getComment = () => ({
-    'id': getRandomPositiveInteger(0, 100),
+    'id': nanoid(),
     'author': userNames[getRandomPositiveInteger(0, userNames.length - 1)],
     'comment': comments[getRandomPositiveInteger(0, comments.length - 1)],
     'date': '2019-05-11T16:12:32.554Z',

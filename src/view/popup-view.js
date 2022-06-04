@@ -19,7 +19,7 @@ const createCommentsTemplate = (comments) => {
     <p class="film-details__comment-info">
       <span class="film-details__comment-author">${current.author}</span>
       <span class="film-details__comment-day">${commentDate(current.date)}</span>
-      <button class="film-details__comment-delete">Delete</button>
+      <button id="${current.id}" class="film-details__comment-delete">Delete</button>
     </p>
     </div>
   </li>`, '');
@@ -161,7 +161,7 @@ export default class PopupView extends AbstractStatefulView {
   }
 
   setButtonCloseElementClick = (callback) => {
-    this._callback.click = callback;
+    this._callback.closeButtonClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#onClick);
   };
 
@@ -178,6 +178,11 @@ export default class PopupView extends AbstractStatefulView {
   setFavoriteElementClick = (callback) => {
     this._callback.favoriteClick = callback;
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#onFavoriteClick);
+  };
+
+  setButtonDeleteCommentClick = (callback) => {
+    this._callback.deleteButtonClick = callback;
+    this.element.querySelector('.film-details__bottom-container').addEventListener('click', this.#onButtonDeleteClick);
   };
 
   setEmotionElementChange = () => {
@@ -205,7 +210,7 @@ export default class PopupView extends AbstractStatefulView {
 
   #onClick = (evt) => {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.closeButtonClick();
   };
 
   #onWatchlistClick = (evt) => {
@@ -243,6 +248,16 @@ export default class PopupView extends AbstractStatefulView {
       });
       this.element.scrollTo(0, this.element.scrollHeight);
     }
+  };
+
+  #onButtonDeleteClick = (evt) => {
+    evt.preventDefault();
+
+    if (evt.target.tagName !== 'BUTTON') {
+      return;
+    }
+
+    this._callback.deleteButtonClick(evt);
   };
 
   static convertPopupToState = (popup) => ({...popup,

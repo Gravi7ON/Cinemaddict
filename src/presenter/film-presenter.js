@@ -1,5 +1,5 @@
 import {RenderPosition, render, remove} from '../framework/render';
-import {Films, Mode, UpdateType, UserAction} from '../const';
+import {Films, Mode, UpdateType, UserAction, DELETE_COUNT} from '../const';
 import MovieCardView from '../view/movie-card-view';
 import PopupView from '../view/popup-view.js';
 
@@ -73,6 +73,7 @@ export default class FilmPresenter {
     this.#popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
     this.#popupComponent.setWatchedElementClick(this.#onPopupWatchedClick);
     this.#popupComponent.setFavoriteElementClick(this.#onPopupFavoriteClick);
+    this.#popupComponent.setButtonDeleteCommentClick(this.#onDeleteButtonClick);
     this.#popupComponent.setEmotionElementChange();
 
     render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
@@ -133,6 +134,23 @@ export default class FilmPresenter {
       UpdateType.MAJOR,
       {...this.#film,
         'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
+  };
+
+  #onDeleteButtonClick = (evt) => {
+    const index = this.#film.comments.findIndex((comment) => comment.id === evt.target.id);
+
+    if (index === -1) {
+      throw new Error('Can\'t delete unexisting comment');
+    }
+
+    const comments = this.#film.comments;
+    comments.splice(index, DELETE_COUNT);
+
+    this.#changeData(
+      UserAction.DELETE_FILM,
+      UpdateType.MAJOR,
+      {...this.#film,
+        comments: comments});
   };
 
   #closePopupOnButtonClick = () => {

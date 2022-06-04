@@ -5,6 +5,8 @@ const Films = {
 };
 
 const FILMS_COUNT_PER_STEP = 5;
+const UPDATE_COUNT = 1;
+const DELETE_COUNT = 1;
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -36,4 +38,4 @@ const FilterType = {
   FAVORITES: 'favorites'
 };
 
-export {Films, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType};
+export {Films, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, UPDATE_COUNT, DELETE_COUNT};

@@ -1,7 +1,6 @@
 import Observable from '../framework/observable.js';
 import {createFilm} from '../mock/film.js';
-
-const UPDATE_COUNT = 1;
+import {UPDATE_COUNT} from '../const.js';
 
 export default class FilmsModel extends Observable {
   #films = Array.from({length: 25}, createFilm);
@@ -19,5 +18,9 @@ export default class FilmsModel extends Observable {
 
     this.#films.splice(index, UPDATE_COUNT, update);
     this._notify(updateType, update);
+  };
+
+  deleteFilmComment = (updateType, films) => {
+    this._notify(updateType, films);
   };
 }
