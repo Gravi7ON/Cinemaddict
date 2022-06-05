@@ -1,5 +1,5 @@
 import {RenderPosition, render, remove} from '../framework/render';
-import {Films, Mode, UpdateType, UserAction, DELETE_COUNT} from '../const';
+import {Films, Mode, UpdateType, UserAction} from '../const';
 import MovieCardView from '../view/movie-card-view';
 import PopupView from '../view/popup-view.js';
 
@@ -137,20 +137,11 @@ export default class FilmPresenter {
   };
 
   #onDeleteButtonClick = (evt) => {
-    const index = this.#film.comments.findIndex((comment) => comment.id === evt.target.id);
-
-    if (index === -1) {
-      throw new Error('Can\'t delete unexisting comment');
-    }
-
-    const comments = this.#film.comments;
-    comments.splice(index, DELETE_COUNT);
-
     this.#changeData(
-      UserAction.DELETE_FILM,
+      UserAction.DELETE_COMMENT,
       UpdateType.MAJOR,
-      {...this.#film,
-        comments: comments});
+      {...this.#film},
+      evt);
   };
 
   #closePopupOnButtonClick = () => {

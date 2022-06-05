@@ -21,7 +21,7 @@ const SortType = {
 
 const UserAction = {
   UPDATE_FILM: 'UPDATE_FILM',
-  DELETE_FILM: 'DELETE_FILM',
+  DELETE_COMMENT: 'DELETE_COMMENT',
 };
 
 const UpdateType = {

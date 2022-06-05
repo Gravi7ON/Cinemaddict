@@ -84,11 +84,11 @@ export default class FilmsPresenter {
     render(this.#userProfile, this.#userProfileElement);
   };
 
-  #renderSortMenu = (position) => {
+  #renderSortMenu = () => {
     this.#sortMenuComponent = new SortMenuView(this.#currentSortType);
     this.#sortMenuComponent.setSortTypeElementClick(this.#onSortTypeChange);
 
-    render(this.#sortMenuComponent, this.#filmsBoard.element, position);
+    render(this.#sortMenuComponent, this.#filmsBoard.element, RenderPosition.BEFOREBEGIN);
   };
 
   #renderFilmAmount = (filmsCards) => {
@@ -148,7 +148,7 @@ export default class FilmsPresenter {
     render(this.#filmsBoard, this.#boardContainer);
 
     if (filmCount > 0) {
-      this.#renderSortMenu(RenderPosition.BEFOREBEGIN);
+      this.#renderSortMenu();
     }
 
     render(this.#filmsList, this.#filmsBoard.element);
@@ -195,11 +195,7 @@ export default class FilmsPresenter {
       remove(this.#filmsListEmptyComponent);
     }
 
-    if (resetRenderedFilmsCount) {
-      this.#renderedFilmCount = FILMS_COUNT_PER_STEP;
-    } else {
-      this.#renderedFilmCount = Math.min(filmCount, this.#renderedFilmCount);
-    }
+    this.#renderedFilmCount = resetRenderedFilmsCount ? FILMS_COUNT_PER_STEP : Math.min(filmCount, this.#renderedFilmCount);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
@@ -225,13 +221,13 @@ export default class FilmsPresenter {
     }
   };
 
-  #onViewAction = (actionType, updateType, update) => {
+  #onViewAction = (actionType, updateType, update, evt) => {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         this.#filmsModel.updateFilm(updateType, update);
         break;
-      case UserAction.DELETE_FILM:
-        this.#filmsModel.deleteFilmComment(updateType, update);
+      case UserAction.DELETE_COMMENT:
+        this.#filmsModel.deleteComment(updateType, update, evt);
         break;
     }
   };
