@@ -38,12 +38,15 @@ export default class FilmsModel extends Observable {
   addComment = (updateType, update) => {
     const film = this.films.find((movie) => movie.id === update.id);
     const comments = film.comments;
+    const emotionElement = document.querySelector('#user-emoji-hidden').value;
+    const commentElement = document.querySelector('.film-details__comment-input').value;
+
     const getComment = () => ({
       'id': nanoid(),
       'author': 'Ilya O\'Reilly',
       'date': '2019-05-11T16:12:32.554Z',
-      'comment': 'Testing comment',
-      'emotion': 'sleeping'
+      'comment': commentElement,
+      'emotion': emotionElement
     });
     const newComment = getComment();
     comments.push(newComment);

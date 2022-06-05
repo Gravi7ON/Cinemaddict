@@ -26,7 +26,7 @@ const createCommentsTemplate = (comments) => {
 };
 
 const createPopupTemplate = (popup) => {
-  const {film_info, comments, localComment, user_details} = popup;
+  const {film_info, comments, user_details} = popup;
   const durationHours = Math.floor(film_info.runtime / 60);
   const durationMunutes = film_info.runtime - 60 * durationHours;
   const releaseDate = formatDate(film_info.release.date).format('D MMM YYYY');
@@ -114,11 +114,11 @@ const createPopupTemplate = (popup) => {
             <div class="film-details__new-comment">
               <div class="film-details__add-emoji-label">
                 <img width="55" height="55" style="visibility: hidden">
-                <input type="hidden" name="user-emoji" value="">
+                <input id="user-emoji-hidden" type="hidden" name="user-emoji" value="">
               </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${localComment.comment}</textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -151,13 +151,15 @@ const createPopupTemplate = (popup) => {
 };
 
 export default class PopupView extends AbstractStatefulView {
+  #film = null;
+
   constructor(popup) {
     super();
-    this._state = PopupView.convertPopupToState(popup);
+    this.#film = PopupView.convertPopupToState(popup);
   }
 
   get template() {
-    return createPopupTemplate(this._state);
+    return createPopupTemplate(this.#film);
   }
 
   setButtonCloseElementClick = (callback) => {
@@ -185,19 +187,9 @@ export default class PopupView extends AbstractStatefulView {
     this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#onButtonDeleteClick);
   };
 
-  setEmotionElementChange = () => {
+  setEmotionElementChange = (callback) => {
+    this._callback.emotionClick = callback;
     this.element.querySelector('.film-details__inner').addEventListener('change', this.#onEmotionButtonClick);
-    this.element.querySelector('.film-details__comment-input').addEventListener('input', (evt) => {
-      evt.preventDefault();
-      const hiddenField = this.element.querySelector('input[type="hidden"]');
-
-      this._setState({
-        localComment: {
-          comment: `${evt.target.value}`,
-          emotion: `${hiddenField.value}`
-        }
-      });
-    });
   };
 
   _restoreHandlers = () => {
@@ -205,7 +197,7 @@ export default class PopupView extends AbstractStatefulView {
     this.setWatchlistElementClick(this._callback.watchlistClick);
     this.setWatchedElementClick(this._callback.watchedClick);
     this.setFavoriteElementClick(this._callback.favoriteClick);
-    this.setEmotionElementChange();
+    this.setEmotionElementChange(this._callback.emotionClick);
   };
 
   #onClick = (evt) => {
@@ -230,24 +222,7 @@ export default class PopupView extends AbstractStatefulView {
 
   #onEmotionButtonClick = (evt) => {
     evt.preventDefault();
-
-    if (evt.target.matches('input[type="radio"]')) {
-      const userEmotionContainer = this.element.querySelector('.film-details__add-emoji-label');
-      const userEmoji = userEmotionContainer.querySelector('img');
-      const userComment = this.element.querySelector('.film-details__comment-input');
-      const hiddenField = userEmotionContainer.querySelector('input');
-      userEmoji.setAttribute('src', `images/emoji/${evt.target.value}.png`);
-      userEmoji.setAttribute('alt', `emoji-${evt.target.value}`);
-      userEmoji.style.visibility = 'visible';
-      hiddenField.value = evt.target.value;
-      this._setState({
-        localComment: {
-          emotion: `${evt.target.value}`,
-          comment: `${userComment.value}`,
-        }
-      });
-      this.element.scrollTo(0, this.element.scrollHeight);
-    }
+    this._callback.emotionClick(evt);
   };
 
   #onButtonDeleteClick = (evt) => {

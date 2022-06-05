@@ -74,7 +74,7 @@ export default class FilmPresenter {
     this.#popupComponent.setWatchedElementClick(this.#onPopupWatchedClick);
     this.#popupComponent.setFavoriteElementClick(this.#onPopupFavoriteClick);
     this.#popupComponent.setButtonDeleteCommentClick(this.#onDeleteCommentButtonClick);
-    this.#popupComponent.setEmotionElementChange();
+    this.#popupComponent.setEmotionElementChange(this.#onEmotionChange);
 
     render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
     this.#bodyContentElement.classList.add('hide-overflow');
@@ -153,6 +153,18 @@ export default class FilmPresenter {
     document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
     this.#mode = Mode.DEFAULT;
+  };
+
+  #onEmotionChange = (evt) => {
+    if (evt.target.matches('input[type="radio"]')) {
+      const userEmotionContainer = document.querySelector('.film-details__add-emoji-label');
+      const userEmoji = userEmotionContainer.querySelector('img');
+      const hiddenField = userEmotionContainer.querySelector('input');
+      userEmoji.setAttribute('src', `images/emoji/${evt.target.value}.png`);
+      userEmoji.setAttribute('alt', `emoji-${evt.target.value}`);
+      userEmoji.style.visibility = 'visible';
+      hiddenField.value = evt.target.value;
+    }
   };
 
   #onCommentSubmit = () => {
