@@ -73,12 +73,13 @@ export default class FilmPresenter {
     this.#popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
     this.#popupComponent.setWatchedElementClick(this.#onPopupWatchedClick);
     this.#popupComponent.setFavoriteElementClick(this.#onPopupFavoriteClick);
-    this.#popupComponent.setButtonDeleteCommentClick(this.#onDeleteButtonClick);
+    this.#popupComponent.setButtonDeleteCommentClick(this.#onDeleteCommentButtonClick);
     this.#popupComponent.setEmotionElementChange();
 
     render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
     this.#bodyContentElement.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
+    document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
     if (this.#mode === Mode.POPUP) {
       return;
@@ -136,7 +137,7 @@ export default class FilmPresenter {
         'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
   };
 
-  #onDeleteButtonClick = (evt) => {
+  #onDeleteCommentButtonClick = (evt) => {
     this.#changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.MAJOR,
@@ -149,14 +150,29 @@ export default class FilmPresenter {
 
     this.#bodyContentElement.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#onEscKeyDown);
+    document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
     this.#mode = Mode.DEFAULT;
+  };
+
+  #onCommentSubmit = () => {
+    this.#changeData(
+      UserAction.ADD_COMMENT,
+      UpdateType.MAJOR,
+      {...this.#film});
   };
 
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.#closePopupOnButtonClick();
+    }
+  };
+
+  #onCommandControlEnterKeySubmit = (evt) => {
+    if ((evt.ctrlKey || evt.metaKey) && evt.key === 'Enter') {
+      evt.preventDefault();
+      this.#onCommentSubmit();
     }
   };
 }

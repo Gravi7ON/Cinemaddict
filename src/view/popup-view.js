@@ -182,7 +182,7 @@ export default class PopupView extends AbstractStatefulView {
 
   setButtonDeleteCommentClick = (callback) => {
     this._callback.deleteButtonClick = callback;
-    this.element.querySelector('.film-details__bottom-container').addEventListener('click', this.#onButtonDeleteClick);
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#onButtonDeleteClick);
   };
 
   setEmotionElementChange = () => {

@@ -229,6 +229,8 @@ export default class FilmsPresenter {
       case UserAction.DELETE_COMMENT:
         this.#filmsModel.deleteComment(updateType, update, evt);
         break;
+      case UserAction.ADD_COMMENT:
+        this.#filmsModel.addComment(updateType, update);
     }
   };
 

@@ -1,6 +1,7 @@
 import Observable from '../framework/observable.js';
 import {createFilm} from '../mock/film.js';
 import {UPDATE_COUNT, DELETE_COUNT} from '../const.js';
+import {nanoid} from 'nanoid';
 
 export default class FilmsModel extends Observable {
   #films = Array.from({length: 25}, createFilm);
@@ -32,5 +33,22 @@ export default class FilmsModel extends Observable {
     refreshComments.splice(indexDeletingComment, DELETE_COUNT);
 
     this._notify(updateType, film);
+  };
+
+  addComment = (updateType, update) => {
+    const film = this.films.find((movie) => movie.id === update.id);
+    const comments = film.comments;
+    const getComment = () => ({
+      'id': nanoid(),
+      'author': 'Ilya O\'Reilly',
+      'date': '2019-05-11T16:12:32.554Z',
+      'comment': 'Testing comment',
+      'emotion': 'sleeping'
+    });
+    const newComment = getComment();
+    comments.push(newComment);
+    const addedComment = {...film, comments};
+
+    this._notify(updateType, addedComment);
   };
 }
