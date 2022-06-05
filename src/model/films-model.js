@@ -32,26 +32,26 @@ export default class FilmsModel extends Observable {
     const refreshComments = film.comments;
     refreshComments.splice(indexDeletingComment, DELETE_COUNT);
 
-    this._notify(updateType, film);
+    this._notify(updateType, update);
   };
 
   addComment = (updateType, update) => {
     const film = this.films.find((movie) => movie.id === update.id);
-    const comments = film.comments;
     const emotionElement = document.querySelector('#user-emoji-hidden').value;
     const commentElement = document.querySelector('.film-details__comment-input').value;
-
     const getComment = () => ({
       'id': nanoid(),
       'author': 'Ilya O\'Reilly',
-      'date': '2019-05-11T16:12:32.554Z',
       'comment': commentElement,
+      'date': '2019-05-11T16:12:32.554Z',
       'emotion': emotionElement
     });
-    const newComment = getComment();
-    comments.push(newComment);
-    const addedComment = {...film, comments};
-
-    this._notify(updateType, addedComment);
+    const newCommnet = getComment();
+    if (!newCommnet.comment || !newCommnet.emotion) {
+      return;
+    }
+    const refreshComments = film.comments;
+    refreshComments.push(newCommnet);
+    this._notify(updateType, film);
   };
 }
