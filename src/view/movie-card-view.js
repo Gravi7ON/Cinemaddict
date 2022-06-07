@@ -1,11 +1,11 @@
 /* eslint-disable camelcase */
 import AbstractView from '../framework/view/abstract-view.js';
-import {formatDate, getShortDescription, toggleButtonStyle} from '../utils/film.js';
+import {formatDate, getShortDescription} from '../utils/film.js';
 
 const classStyleButtonsCard = 'film-card__controls-item--active';
 
 const createMovieCardTemplate = (film) => {
-  const {film_info, comments} = film;
+  const {film_info, comments, user_details} = film;
   const durationHours = Math.floor(film_info.runtime / 60);
   const durationMunutes = film_info.runtime - 60 * durationHours;
   const releaseYear = formatDate(film_info.release.date).format('YYYY');
@@ -25,9 +25,9 @@ const createMovieCardTemplate = (film) => {
         <span class="film-card__comments">${comments.length} comments</span>
       </a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-        <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
+        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${user_details.watchlist ? classStyleButtonsCard : ''}" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${user_details.already_watched ? classStyleButtonsCard : ''}" type="button">Mark as watched</button>
+        <button class="film-card__controls-item film-card__controls-item--favorite ${user_details.favorite ? classStyleButtonsCard : ''}" type="button">Mark as favorite</button>
       </div>
     </article>`
   );
@@ -73,18 +73,15 @@ export default class MovieCardView extends AbstractView {
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
     this._callback.watchlistClick();
-    toggleButtonStyle(evt, classStyleButtonsCard);
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
     this._callback.watchedClick();
-    toggleButtonStyle(evt, classStyleButtonsCard);
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
-    toggleButtonStyle(evt, classStyleButtonsCard);
   };
 }

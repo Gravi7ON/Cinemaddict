@@ -12,8 +12,6 @@ const getShortDescription = (description) => {
   return description.trim();
 };
 
-const toggleButtonStyle = (evt, styleClass) => evt.target.classList.toggle(styleClass);
-
 const sortFilmsDate = (filmA, filmB) => {
   const dateA = formatDate(filmA.film_info.release.date).format('YYYY');
   const dateB = formatDate(filmB.film_info.release.date).format('YYYY');
@@ -28,4 +26,4 @@ const sortFilmsRating = (filmA, filmB) => {
   return ratingB - ratingA;
 };
 
-export {formatDate, getShortDescription, toggleButtonStyle, sortFilmsDate, sortFilmsRating};
+export {formatDate, getShortDescription, sortFilmsDate, sortFilmsRating};
