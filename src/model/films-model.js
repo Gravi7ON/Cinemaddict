@@ -22,15 +22,14 @@ export default class FilmsModel extends Observable {
 
   deleteComment = (updateType, update, commentId) => {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
-    const currentFilm = this.films.find((film) => film.id === update.id);
-    const indexDeletingComment = currentFilm.comments.findIndex((comment) => comment.id === commentId);
-    currentFilm.comments.splice(indexDeletingComment, DELETE_COUNT);
+    const indexDeletingComment = update.comments.findIndex((comment) => comment.id === commentId);
+    update.comments.splice(indexDeletingComment, DELETE_COUNT);
 
     this.#films = [
-      ...this.#films.slice(0, filmIndex -1),
+      ...this.#films.slice(0, filmIndex),
       {
         ...update,
-        comments: [...currentFilm.comments]
+        comments: [...update.comments]
       },
       ...this.#films.slice(filmIndex + 1)
     ];
@@ -40,19 +39,18 @@ export default class FilmsModel extends Observable {
 
   addComment = (updateType, update, newComment) => {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
-    const currentFilm = this.films.find((film) => film.id === update.id);
 
     if (!newComment.comment || !newComment.emotion) {
       return;
     }
 
-    currentFilm.comments.push(newComment);
+    update.comments.push(newComment);
 
     this.#films = [
-      ...this.#films.slice(0, filmIndex -1),
+      ...this.#films.slice(0, filmIndex),
       {
         ...update,
-        comments: [...currentFilm.comments]
+        comments: [...update.comments]
       },
       ...this.#films.slice(filmIndex + 1)
     ];
