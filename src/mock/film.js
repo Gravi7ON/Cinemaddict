@@ -89,7 +89,7 @@ const createComment = () => {
     'date': '2019-05-11T16:12:32.554Z',
     'emotion': emotions[getRandomPositiveInteger(0, emotions.length - 1)]
   });
-  return Array.from({length: getRandomPositiveInteger(1, 5)}, getComment);
+  return Array.from({length: getRandomPositiveInteger(1, 10)}, getComment);
 };
 
 const getDate = () => {

@@ -2,6 +2,7 @@ import {RenderPosition, render, remove} from '../framework/render';
 import {Films, Mode, UpdateType, UserAction} from '../const';
 import MovieCardView from '../view/movie-card-view';
 import PopupView from '../view/popup-view.js';
+import {nanoid} from 'nanoid';
 
 export default class FilmPresenter {
   #filmCardComponent = null;
@@ -142,7 +143,7 @@ export default class FilmPresenter {
       UserAction.DELETE_COMMENT,
       UpdateType.MAJOR,
       {...this.#film},
-      evt);
+      evt.target.id);
   };
 
   #closePopupOnButtonClick = () => {
@@ -150,7 +151,7 @@ export default class FilmPresenter {
 
     this.#bodyContentElement.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#onEscKeyDown);
-    document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
+    document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
     this.#mode = Mode.DEFAULT;
   };
@@ -168,10 +169,21 @@ export default class FilmPresenter {
   };
 
   #onCommentSubmit = () => {
+    const emotionElement = document.querySelector('#user-emoji-hidden').value;
+    const commentElement = document.querySelector('.film-details__comment-input').value;
+    const getComment = () => ({
+      'id': nanoid(),
+      'author': 'Ilya O\'Reilly',
+      'comment': commentElement,
+      'date': '2019-05-11T16:12:32.554Z',
+      'emotion': emotionElement
+    });
     this.#changeData(
       UserAction.ADD_COMMENT,
       UpdateType.MAJOR,
-      {...this.#film});
+      {...this.#film},
+      null,
+      getComment());
   };
 
   #onEscKeyDown = (evt) => {
@@ -185,6 +197,11 @@ export default class FilmPresenter {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === 'Enter') {
       evt.preventDefault();
       this.#onCommentSubmit();
+
+      const popup = document.querySelector('.film-details');
+      const currentPosition = popup.scrollHeight;
+      const newPopup = document.querySelector('.film-details');
+      newPopup.scrollTo(0, currentPosition);
     }
   };
 }

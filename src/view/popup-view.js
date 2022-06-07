@@ -155,7 +155,7 @@ export default class PopupView extends AbstractStatefulView {
 
   constructor(popup) {
     super();
-    this.#film = PopupView.convertPopupToState(popup);
+    this.#film = popup;
   }
 
   get template() {
@@ -192,12 +192,12 @@ export default class PopupView extends AbstractStatefulView {
     this.element.querySelector('.film-details__inner').addEventListener('change', this.#onEmotionButtonClick);
   };
 
-  _restoreHandlers = () => {
-    this.setButtonCloseElementClick(this._callback.click);
-    this.setWatchlistElementClick(this._callback.watchlistClick);
-    this.setWatchedElementClick(this._callback.watchedClick);
-    this.setFavoriteElementClick(this._callback.favoriteClick);
-    this.setEmotionElementChange(this._callback.emotionClick);
+  _restoreScrollForChange = (callback, evt) => {
+    const popup = document.querySelector('.film-details');
+    const currentPosition = popup.scrollTop;
+    callback(evt);
+    const newPopup = document.querySelector('.film-details');
+    newPopup.scrollTo(0, currentPosition);
   };
 
   #onClick = (evt) => {
@@ -207,17 +207,17 @@ export default class PopupView extends AbstractStatefulView {
 
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
-    this._callback.watchlistClick();
+    this._restoreScrollForChange(this._callback.watchlistClick);
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
-    this._callback.watchedClick();
+    this._restoreScrollForChange(this._callback.watchedClick);
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
-    this._callback.favoriteClick();
+    this._restoreScrollForChange(this._callback.favoriteClick);
   };
 
   #onEmotionButtonClick = (evt) => {
@@ -232,21 +232,6 @@ export default class PopupView extends AbstractStatefulView {
       return;
     }
 
-    this._callback.deleteButtonClick(evt);
-  };
-
-  static convertPopupToState = (popup) => ({...popup,
-    localComment: {
-      comment: '',
-      emotion: ''
-    }
-  });
-
-  static convertStateToPopup = (state) => {
-    const popup = {...state};
-
-    delete popup.localComment;
-
-    return popup;
+    this._restoreScrollForChange(this._callback.deleteButtonClick, evt);
   };
 }

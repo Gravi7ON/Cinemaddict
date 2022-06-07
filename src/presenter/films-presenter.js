@@ -221,16 +221,16 @@ export default class FilmsPresenter {
     }
   };
 
-  #onViewAction = (actionType, updateType, update, evt) => {
+  #onViewAction = (actionType, updateType, update, commentId, newCommnet) => {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmsModel.deleteComment(updateType, update, evt);
+        this.#filmsModel.deleteComment(updateType, update, commentId);
         break;
       case UserAction.ADD_COMMENT:
-        this.#filmsModel.addComment(updateType, update);
+        this.#filmsModel.addComment(updateType, update, newCommnet);
         break;
     }
   };
