@@ -9,6 +9,7 @@ import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import UserProfileView from '../view/user-profile-view.js';
 import FilmAmountView from '../view/film-amount-view.js';
 import FilmPresenter from './film-presenter.js';
+import LoadingView from '../view/loading-view.js';
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortFilmsDate, sortFilmsRating} from '../utils/film.js';
 import {filter} from '../utils/filter.js';
@@ -27,6 +28,7 @@ export default class FilmsPresenter {
   #renderedFilmCount = FILMS_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
+  #isLoading = true;
 
   #userProfileElement = document.querySelector('.header');
   #filmAmountElement = document.querySelector('.footer__statistics');
@@ -38,6 +40,7 @@ export default class FilmsPresenter {
   #filmsMostCommentedContainer = new FilmsContainerView();
   #filmsTopRatedList = new FilmsTopRatedListView();
   #filmsMostCommentedList = new FilmsMostCommentedListView();
+  #loadingComponent = new LoadingView();
   #filmPresenter = new Map();
   #filmRatedPresenter = new Map();
   #filmCommentedPresenter = new Map();
@@ -67,11 +70,19 @@ export default class FilmsPresenter {
   }
 
   init = () => {
+    if (this.#isLoading) {
+      this.#isLoading = false;
+      this.#renderLoading(this.films);
+      return;
+    }
+
     if (this.films.length === 0) {
+      remove(this.#filmsAmount);
       this.#renderNoFilms(this.films);
       return;
     }
 
+    remove(this.#filmsAmount);
     this.#renderUserProfile();
     this.#renderCommonFilms();
     this.#renderFilmAmount(this.films);
@@ -157,6 +168,12 @@ export default class FilmsPresenter {
     if (filmCount > this.#renderedFilmCount) {
       this.#renderShowMoreButton();
     }
+  };
+
+  #renderLoading = (filmsCards) => {
+    render(this.#filmsBoard, this.#boardContainer);
+    render(this.#loadingComponent, this.#filmsBoard.element);
+    this.#renderFilmAmount(filmsCards);
   };
 
   #renderFilmsRatedList = () => {
@@ -252,6 +269,9 @@ export default class FilmsPresenter {
         this.#renderCommonFilms();
         this.#filmPresenter.get(update.id).rerenderPopup();
         break;
+      case UpdateType.INIT:
+        remove(this.#loadingComponent);
+        this.init();
     }
   };
 

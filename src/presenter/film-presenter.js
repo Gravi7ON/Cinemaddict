@@ -1,6 +1,6 @@
-import {RenderPosition, render, remove} from '../framework/render';
-import {Films, Mode, UpdateType, UserAction} from '../const';
-import MovieCardView from '../view/movie-card-view';
+import {RenderPosition, render, remove} from '../framework/render.js';
+import {Films, Mode, UpdateType, UserAction} from '../const.js';
+import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
 import {nanoid} from 'nanoid';
 
@@ -198,10 +198,9 @@ export default class FilmPresenter {
       evt.preventDefault();
       this.#onCommentSubmit();
 
-      const popup = document.querySelector('.film-details');
-      const currentPosition = popup.scrollHeight;
+      const currentPopupPosition = document.querySelector('.film-details').scrollHeight;
       const newPopup = document.querySelector('.film-details');
-      newPopup.scrollTo(0, currentPosition);
+      newPopup.scrollTo(0, currentPopupPosition);
     }
   };
 }

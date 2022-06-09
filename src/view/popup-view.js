@@ -193,11 +193,10 @@ export default class PopupView extends AbstractStatefulView {
   };
 
   _restoreScrollForChange = (callback, evt) => {
-    const popup = document.querySelector('.film-details');
-    const currentPosition = popup.scrollTop;
+    const currentPopupPosition = document.querySelector('.film-details').scrollTop;
     callback(evt);
     const newPopup = document.querySelector('.film-details');
-    newPopup.scrollTo(0, currentPosition);
+    newPopup.scrollTo(0, currentPopupPosition);
   };
 
   #onClick = (evt) => {

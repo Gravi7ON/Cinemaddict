@@ -1,13 +1,27 @@
 import Observable from '../framework/observable.js';
-import {createFilm} from '../mock/film.js';
-import {UPDATE_COUNT, DELETE_COUNT} from '../const.js';
+import {UPDATE_COUNT, DELETE_COUNT, UpdateType} from '../const.js';
 
 export default class FilmsModel extends Observable {
-  #films = Array.from({length: 25}, createFilm);
+  #filmsApiService = null;
+  #films = [];
+
+  constructor(filmsApiService) {
+    super();
+    this.#filmsApiService = filmsApiService;
+  }
 
   get films() {
     return this.#films;
   }
+
+  init = async () => {
+    try {
+      this.#films = await this.#filmsApiService.films;
+    } catch(err) {
+      this.#films = [];
+    }
+    this._notify(UpdateType.INIT);
+  };
 
   updateFilm = (updateType, update) => {
     const index = this.#films.findIndex((film) => film.id === update.id);
