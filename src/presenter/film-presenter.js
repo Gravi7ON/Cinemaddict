@@ -2,9 +2,10 @@ import {RenderPosition, render, remove} from '../framework/render.js';
 import {Films, Mode, UpdateType, UserAction} from '../const.js';
 import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
+import FilmsApiService from '../films-api-service.js';
 import {nanoid} from 'nanoid';
 
-export default class FilmPresenter {
+export default class FilmPresenter extends FilmsApiService {
   #filmCardComponent = null;
   #filmsContainer = null;
   #popupComponent = null;
@@ -19,6 +20,7 @@ export default class FilmPresenter {
   #footerContentElement  = document.querySelector('.footer');
 
   constructor(filmsContainer, changeData, changeMode) {
+    super();
     this.#filmsContainer = filmsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
@@ -63,12 +65,13 @@ export default class FilmPresenter {
     }
   };
 
-  #renderPopupOnCardClick = () => {
+  #renderPopupOnCardClick = async () => {
     if (this.#popupComponent !== null) {
       this.#popupComponent.removeElement();
     }
 
-    this.#popupComponent = new PopupView(this.#film);
+    const comments = await this.getComments(this.#film.id);
+    this.#popupComponent = new PopupView(this.#film, comments);
 
     this.#popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
     this.#popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
