@@ -1,8 +1,5 @@
 import ApiService from './framework/api-service.js';
-import {nanoid} from 'nanoid';
 import {showErrorLoadWrapper} from './utils/film.js';
-
-const RANDOM_STRING = nanoid();
 
 const Method = {
   GET: 'GET',
@@ -17,9 +14,9 @@ export default class FilmsApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  getComments = (filmId) => fetch(`https://17.ecmascript.pages.academy/cinemaddict/comment/${filmId}`, {
+  getComments = (filmId) => fetch(`https://17.ecmascript.pages.academy/cinemaddict/comments/${filmId}`, {
     headers: {
-      'Authorization': `Basic ${RANDOM_STRING}`
+      'Authorization': 'Basic nDiIRKWW9mAGnbeUIKcu'
     }})
     .then((response) => {
       if (!response.ok) {

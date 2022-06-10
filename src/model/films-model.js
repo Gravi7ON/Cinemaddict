@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import {UPDATE_COUNT, DELETE_COUNT, UpdateType} from '../const.js';
+import {DELETE_COUNT, UpdateType} from '../const.js';
 
 export default class FilmsModel extends Observable {
   #filmsApiService = null;
@@ -23,15 +23,24 @@ export default class FilmsModel extends Observable {
     this._notify(UpdateType.INIT);
   };
 
-  updateFilm = (updateType, update) => {
+  updateFilm = async (updateType, update) => {
     const index = this.#films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting film');
     }
 
-    this.#films.splice(index, UPDATE_COUNT, update);
-    this._notify(updateType, update);
+    try {
+      const updatedFilm = await this.#filmsApiService.updateTask(update);
+      this.#films = [
+        ...this.#films.slice(0, index),
+        updatedFilm,
+        ...this.#films.slice(index + 1),
+      ];
+      this._notify(updateType, updatedFilm);
+    } catch(err) {
+      throw new Error('Can\'t update task');
+    }
   };
 
   deleteComment = (updateType, update, commentId) => {
