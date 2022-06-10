@@ -14,7 +14,7 @@ export default class FilmsApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  getComments = (filmId) => fetch(`https://17.ecmascript.pages.academy/cinemaddict/comments/${filmId}`, {
+  getComments = (filmId) => fetch(`${this._endPoint}/comment/${filmId}`, {
     headers: {
       'Authorization': 'Basic nDiIRKWW9mAGnbeUIKcu'
     }})

@@ -23,6 +23,11 @@ export default class FilmsModel extends Observable {
     this._notify(UpdateType.INIT);
   };
 
+  getComments = (filmId) => {
+    const comments = this.#filmsApiService.getComments(filmId);
+    return comments;
+  };
+
   updateFilm = async (updateType, update) => {
     const index = this.#films.findIndex((film) => film.id === update.id);
 

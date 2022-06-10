@@ -122,7 +122,7 @@ export default class FilmsPresenter {
   };
 
   #renderFilm = (card, typeList, typeContainer) => {
-    const filmPresenter = new FilmPresenter(typeContainer, this.#onViewAction, this.#onModeChange);
+    const filmPresenter = new FilmPresenter(typeContainer, this.#onViewAction, this.#onModeChange, this.#filmsModel.getComments);
     filmPresenter.init(card, typeList);
 
     if (typeList === Films.RATED_LIST) {
