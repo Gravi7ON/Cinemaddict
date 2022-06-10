@@ -40,7 +40,7 @@ const showErrorLoadWrapper = (message) => {
   errorBlockElement.style.fontWeight = 'bold';
   errorBlockElement.style.textAlign = 'center';
   errorBlockElement.style.fontFamily = 'Open Sans, sans-serif';
-  errorBlockElement.style.color = '#ff00009c';
+  errorBlockElement.style.color = '#2a3461';
   errorBlockElement.style.backgroundColor = '#212126';
 
   errorBlockElement.textContent = `Comments not found, please try again (${message})`.toUpperCase();
