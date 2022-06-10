@@ -159,7 +159,7 @@ export default class FilmPresenter {
     this.#bodyContentElement.classList.remove('hide-overflow');
     const notification = this.#bodyContentElement.querySelector('.film-details_error-notification');
     if (notification) {
-      notification.classList.remove('film-details_error-notification');
+      notification.remove('film-details_error-notification');
     }
     document.removeEventListener('keydown', this.#onEscKeyDown);
     document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);

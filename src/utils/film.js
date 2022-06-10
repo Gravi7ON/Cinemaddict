@@ -33,8 +33,7 @@ const showErrorLoadWrapper = (message) => {
   document.body.append(errorBlockElement);
 
   setTimeout(() => {
-    document.body.remove(errorBlockElement);
-    errorBlockElement.classList.remove('film-details_error-notification');
+    document.querySelector('.film-details_error-notification').remove();
   }, 5000);
 };
 
