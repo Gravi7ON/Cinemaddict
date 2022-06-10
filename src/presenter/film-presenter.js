@@ -49,8 +49,8 @@ export default class FilmPresenter extends FilmsApiService {
     }
   };
 
-  rerenderPopup = () => {
-    this.#renderPopupOnCardClick();
+  rerenderPopup = (comments) => {
+    this.#renderPopupOnCardClick(comments);
   };
 
   destroy = () => {
@@ -65,13 +65,17 @@ export default class FilmPresenter extends FilmsApiService {
     }
   };
 
-  #renderPopupOnCardClick = async () => {
+  #renderPopupOnCardClick = async (comments) => {
     if (this.#popupComponent !== null) {
       this.#popupComponent.removeElement();
     }
 
-    const comments = await this.getComments(this.#film.id);
-    this.#popupComponent = new PopupView(this.#film, comments);
+    if (comments) {
+      this.#popupComponent = new PopupView(this.#film, comments);
+    } else {
+      const receivedComments = await this.getComments(this.#film.id);
+      this.#popupComponent = new PopupView(this.#film, receivedComments);
+    }
 
     this.#popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
     this.#popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
@@ -153,6 +157,10 @@ export default class FilmPresenter extends FilmsApiService {
     this.#popupComponent.removeElement();
 
     this.#bodyContentElement.classList.remove('hide-overflow');
+    const notification = this.#bodyContentElement.querySelector('.film-details_error-notification');
+    if (notification) {
+      notification.classList.remove('film-details_error-notification');
+    }
     document.removeEventListener('keydown', this.#onEscKeyDown);
     document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 

@@ -29,7 +29,7 @@ export default class FilmsApiService extends ApiService {
       showErrorLoadWrapper(err);
     });
 
-  updateTask = async (film) => {
+  updateFilm = async (film) => {
     const response = await this._load({
       url: `movies/${film.id}`,
       method: Method.PUT,

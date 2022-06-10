@@ -252,7 +252,7 @@ export default class FilmsPresenter {
     }
   };
 
-  #onModelEvent = (updateType, update) => {
+  #onModelEvent = (updateType, update, comments) => {
     switch (updateType) {
       case UpdateType.PRE_MINOR:
         this.#clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
@@ -267,7 +267,7 @@ export default class FilmsPresenter {
         this.#clearFilmList({rerenderUserProfile: true});
         this.#renderUserProfile();
         this.#renderCommonFilms();
-        this.#filmPresenter.get(update.id).rerenderPopup();
+        this.#filmPresenter.get(update.id).rerenderPopup(comments);
         break;
       case UpdateType.INIT:
         remove(this.#loadingComponent);

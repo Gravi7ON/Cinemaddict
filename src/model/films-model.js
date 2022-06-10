@@ -31,15 +31,16 @@ export default class FilmsModel extends Observable {
     }
 
     try {
-      const updatedFilm = await this.#filmsApiService.updateTask(update);
+      const updatedFilm = await this.#filmsApiService.updateFilm(update);
+      const comments = await this.#filmsApiService.getComments(update.id);
       this.#films = [
         ...this.#films.slice(0, index),
         updatedFilm,
         ...this.#films.slice(index + 1),
       ];
-      this._notify(updateType, updatedFilm);
+      this._notify(updateType, updatedFilm, comments);
     } catch(err) {
-      throw new Error('Can\'t update task');
+      throw new Error('Can\'t update film');
     }
   };
 

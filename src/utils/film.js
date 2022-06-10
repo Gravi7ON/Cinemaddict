@@ -28,27 +28,12 @@ const sortFilmsRating = (filmA, filmB) => {
 
 const showErrorLoadWrapper = (message) => {
   const errorBlockElement = document.createElement('div');
-  errorBlockElement.style.zIndex = 100;
-  errorBlockElement.style.position = 'absolute';
-  errorBlockElement.style.left = 0;
-  errorBlockElement.style.top = 0;
-  errorBlockElement.style.right = 0;
-  errorBlockElement.style.boxShadow = '0 2px 5px #0e1f3cc4';
-  errorBlockElement.style.padding = '35px 3px';
-  errorBlockElement.style.opacity = '95%';
-  errorBlockElement.style.fontSize = '20px';
-  errorBlockElement.style.fontWeight = 'bold';
-  errorBlockElement.style.textAlign = 'center';
-  errorBlockElement.style.fontFamily = 'Open Sans, sans-serif';
-  errorBlockElement.style.color = '#2a3461';
-  errorBlockElement.style.backgroundColor = '#212126';
-
-  errorBlockElement.textContent = `Comments not found, please try again (${message})`.toUpperCase();
-
+  errorBlockElement.classList.add('film-details_error-notification');
+  errorBlockElement.textContent = `Comments not found, please try again (${message})`;
   document.body.append(errorBlockElement);
 
   setTimeout(() => {
-    errorBlockElement.remove();
+    errorBlockElement.classList.remove('film-details_error-notification');
   }, 5000);
 };
 
