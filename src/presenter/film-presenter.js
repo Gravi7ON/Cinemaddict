@@ -13,17 +13,17 @@ export default class FilmPresenter {
   #changeMode = null;
 
   #film = null;
-  #comments = null;
+  #loadComments = null;
   #mode = Mode.DEFAULT;
 
   #bodyContentElement = document.body;
   #footerContentElement  = document.querySelector('.footer');
 
-  constructor(filmsContainer, changeData, changeMode, comments) {
+  constructor(filmsContainer, changeData, changeMode, loadComments) {
     this.#filmsContainer = filmsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
-    this.#comments = comments;
+    this.#loadComments = loadComments;
   }
 
   init = (card, typeList) => {
@@ -73,7 +73,7 @@ export default class FilmPresenter {
     if (comments) {
       this.#popupComponent = new PopupView(this.#film, comments);
     } else {
-      const receivedComments = await this.#comments(this.#film.id);
+      const receivedComments = await this.#loadComments(this.#film.id);
       this.#popupComponent = new PopupView(this.#film, receivedComments);
     }
 

@@ -14,9 +14,9 @@ export default class FilmsApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  getComments = (filmId) => fetch(`${this._endPoint}/comment/${filmId}`, {
+  getComments = (filmId) => fetch(`${this._endPoint}/comments/${filmId}`, {
     headers: {
-      'Authorization': 'Basic nDiIRKWW9mAGnbeUIKcu'
+      'Authorization': `${this._authorization}`
     }})
     .then((response) => {
       if (!response.ok) {
