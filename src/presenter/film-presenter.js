@@ -1,6 +1,6 @@
-import {RenderPosition, render, remove} from '../framework/render';
-import {Films, Mode, UpdateType, UserAction} from '../const';
-import MovieCardView from '../view/movie-card-view';
+import {RenderPosition, render, remove} from '../framework/render.js';
+import {Films, Mode, UpdateType, UserAction} from '../const.js';
+import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
 import {nanoid} from 'nanoid';
 
@@ -13,15 +13,18 @@ export default class FilmPresenter {
   #changeMode = null;
 
   #film = null;
+  #loadComments = null;
+  #curentPosition = null;
   #mode = Mode.DEFAULT;
 
   #bodyContentElement = document.body;
   #footerContentElement  = document.querySelector('.footer');
 
-  constructor(filmsContainer, changeData, changeMode) {
+  constructor(filmsContainer, changeData, changeMode, loadComments) {
     this.#filmsContainer = filmsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#loadComments = loadComments;
   }
 
   init = (card, typeList) => {
@@ -47,13 +50,18 @@ export default class FilmPresenter {
     }
   };
 
-  rerenderPopup = () => {
-    this.#renderPopupOnCardClick();
+  rerenderPopup = (preLoadComments, currentPopupPosition) => {
+    this.#renderPopupOnCardClick(preLoadComments, currentPopupPosition);
   };
 
   destroy = () => {
     remove(this.#filmCardComponent);
     remove(this.#popupComponent);
+  };
+
+  getCurrentPopupPosition = () => {
+    this.#curentPosition = this.#popupComponent._currentTopPosition;
+    return this.#curentPosition;
   };
 
   resetView = () => {
@@ -63,12 +71,17 @@ export default class FilmPresenter {
     }
   };
 
-  #renderPopupOnCardClick = () => {
+  #renderPopupOnCardClick = async (comments, currentPopupPosition) => {
     if (this.#popupComponent !== null) {
       this.#popupComponent.removeElement();
     }
 
-    this.#popupComponent = new PopupView(this.#film);
+    if (comments) {
+      this.#popupComponent = new PopupView(this.#film, comments);
+    } else {
+      const firstLoad = await this.#loadComments(this.#film.id);
+      this.#popupComponent = new PopupView(this.#film, firstLoad);
+    }
 
     this.#popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
     this.#popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
@@ -79,6 +92,7 @@ export default class FilmPresenter {
 
     render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
     this.#bodyContentElement.classList.add('hide-overflow');
+    this.#popupComponent._scrollTo(currentPopupPosition);
     document.addEventListener('keydown', this.#onEscKeyDown);
     document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
@@ -150,6 +164,10 @@ export default class FilmPresenter {
     this.#popupComponent.removeElement();
 
     this.#bodyContentElement.classList.remove('hide-overflow');
+    const notification = this.#bodyContentElement.querySelector('.film-details_error-notification');
+    if (notification) {
+      notification.remove('film-details_error-notification');
+    }
     document.removeEventListener('keydown', this.#onEscKeyDown);
     document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
@@ -198,10 +216,9 @@ export default class FilmPresenter {
       evt.preventDefault();
       this.#onCommentSubmit();
 
-      const popup = document.querySelector('.film-details');
-      const currentPosition = popup.scrollHeight;
+      const currentPopupPosition = document.querySelector('.film-details').scrollHeight;
       const newPopup = document.querySelector('.film-details');
-      newPopup.scrollTo(0, currentPosition);
+      newPopup.scrollTo(0, currentPopupPosition);
     }
   };
 }

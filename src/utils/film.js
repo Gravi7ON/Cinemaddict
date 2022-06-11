@@ -26,4 +26,15 @@ const sortFilmsRating = (filmA, filmB) => {
   return ratingB - ratingA;
 };
 
-export {formatDate, getShortDescription, sortFilmsDate, sortFilmsRating};
+const showErrorLoadWrapper = (message) => {
+  const errorBlockElement = document.createElement('div');
+  errorBlockElement.classList.add('film-details_error-notification');
+  errorBlockElement.textContent = `Comments not found, please try again (${message})`;
+  document.body.append(errorBlockElement);
+
+  setTimeout(() => {
+    document.querySelector('.film-details_error-notification').remove();
+  }, 5000);
+};
+
+export {formatDate, getShortDescription, sortFilmsDate, sortFilmsRating, showErrorLoadWrapper};

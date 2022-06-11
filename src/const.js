@@ -29,7 +29,8 @@ const UpdateType = {
   PATCH: 'PATCH',
   PRE_MINOR: 'PRE_MINOR',
   MINOR: 'MINOR',
-  MAJOR: 'MAJOR'
+  MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
 const FilterType = {

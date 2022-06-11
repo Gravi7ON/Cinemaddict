@@ -26,8 +26,9 @@ export default class FilterPresenter {
     const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent = new FilterMenuView(this.filters, this.#filterModel.filter);
-    this.#filterComponent.setFilterTypeElementClick(this.#handleFilterTypeChange);
-
+    if (!this.#filmsModel.films.length === 0) {
+      this.#filterComponent.setFilterTypeElementClick(this.#handleFilterTypeChange);
+    }
     if (prevFilterComponent === null) {
       render(this.#filterComponent, this.#filterContainer);
       return;
@@ -39,6 +40,7 @@ export default class FilterPresenter {
 
   #handleModelEvent = () => {
     this.init();
+    this.#filterComponent.setFilterTypeElementClick(this.#handleFilterTypeChange);
   };
 
   #handleFilterTypeChange = (filterType) => {

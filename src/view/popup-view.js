@@ -25,8 +25,8 @@ const createCommentsTemplate = (comments) => {
   </li>`, '');
 };
 
-const createPopupTemplate = (popup) => {
-  const {film_info, comments, user_details} = popup;
+const createPopupTemplate = (popup, comments) => {
+  const {film_info, user_details} = popup;
   const durationHours = Math.floor(film_info.runtime / 60);
   const durationMunutes = film_info.runtime - 60 * durationHours;
   const releaseDate = formatDate(film_info.release.date).format('D MMM YYYY');
@@ -152,14 +152,17 @@ const createPopupTemplate = (popup) => {
 
 export default class PopupView extends AbstractStatefulView {
   #film = null;
+  #comments = [];
+  _currentTopPosition = null;
 
-  constructor(popup) {
+  constructor(popup, comments = []) {
     super();
     this.#film = popup;
+    this.#comments = comments;
   }
 
   get template() {
-    return createPopupTemplate(this.#film);
+    return createPopupTemplate(this.#film, this.#comments);
   }
 
   setButtonCloseElementClick = (callback) => {
@@ -193,11 +196,13 @@ export default class PopupView extends AbstractStatefulView {
   };
 
   _restoreScrollForChange = (callback, evt) => {
-    const popup = document.querySelector('.film-details');
-    const currentPosition = popup.scrollTop;
+    this._currentTopPosition = this.element.scrollTop;
     callback(evt);
-    const newPopup = document.querySelector('.film-details');
-    newPopup.scrollTo(0, currentPosition);
+  };
+
+  _scrollTo = (currentPosition) => {
+    this.element.scrollTo(0, currentPosition);
+    this._currentTopPosition = 0;
   };
 
   #onClick = (evt) => {
