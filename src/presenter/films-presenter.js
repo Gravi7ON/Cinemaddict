@@ -25,6 +25,7 @@ export default class FilmsPresenter {
   #filmsAmount = null;
   #filterModel = null;
   #filmsListEmptyComponent = null;
+  #currentPopupPosition = null;
   #renderedFilmCount = FILMS_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
@@ -264,10 +265,11 @@ export default class FilmsPresenter {
         this.#renderCommonFilms();
         break;
       case UpdateType.MAJOR:
+        this.#currentPopupPosition = this.#filmPresenter.get(update.id).getCurrentPopupPosition();
         this.#clearFilmList({rerenderUserProfile: true});
         this.#renderUserProfile();
         this.#renderCommonFilms();
-        this.#filmPresenter.get(update.id).rerenderPopup(comments);
+        this.#filmPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
         break;
       case UpdateType.INIT:
         remove(this.#loadingComponent);

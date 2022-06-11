@@ -153,6 +153,7 @@ const createPopupTemplate = (popup, comments) => {
 export default class PopupView extends AbstractStatefulView {
   #film = null;
   #comments = [];
+  _currentTopPosition = null;
 
   constructor(popup, comments = []) {
     super();
@@ -195,10 +196,13 @@ export default class PopupView extends AbstractStatefulView {
   };
 
   _restoreScrollForChange = (callback, evt) => {
-    const currentPopupPosition = document.querySelector('.film-details').scrollTop;
+    this._currentTopPosition = this.element.scrollTop;
     callback(evt);
-    const newPopup = document.querySelector('.film-details');
-    newPopup.scrollTo(0, currentPopupPosition);
+  };
+
+  _scrollTo = (currentPosition) => {
+    this.element.scrollTo(0, currentPosition);
+    this._currentTopPosition = 0;
   };
 
   #onClick = (evt) => {

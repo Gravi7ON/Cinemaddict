@@ -14,6 +14,7 @@ export default class FilmPresenter {
 
   #film = null;
   #loadComments = null;
+  #curentPosition = null;
   #mode = Mode.DEFAULT;
 
   #bodyContentElement = document.body;
@@ -49,13 +50,18 @@ export default class FilmPresenter {
     }
   };
 
-  rerenderPopup = (comments) => {
-    this.#renderPopupOnCardClick(comments);
+  rerenderPopup = (preLoadComments, currentPopupPosition) => {
+    this.#renderPopupOnCardClick(preLoadComments, currentPopupPosition);
   };
 
   destroy = () => {
     remove(this.#filmCardComponent);
     remove(this.#popupComponent);
+  };
+
+  getCurrentPopupPosition = () => {
+    this.#curentPosition = this.#popupComponent._currentTopPosition;
+    return this.#curentPosition;
   };
 
   resetView = () => {
@@ -65,7 +71,7 @@ export default class FilmPresenter {
     }
   };
 
-  #renderPopupOnCardClick = async (comments) => {
+  #renderPopupOnCardClick = async (comments, currentPopupPosition) => {
     if (this.#popupComponent !== null) {
       this.#popupComponent.removeElement();
     }
@@ -73,8 +79,8 @@ export default class FilmPresenter {
     if (comments) {
       this.#popupComponent = new PopupView(this.#film, comments);
     } else {
-      const receivedComments = await this.#loadComments(this.#film.id);
-      this.#popupComponent = new PopupView(this.#film, receivedComments);
+      const firstLoad = await this.#loadComments(this.#film.id);
+      this.#popupComponent = new PopupView(this.#film, firstLoad);
     }
 
     this.#popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
@@ -86,6 +92,7 @@ export default class FilmPresenter {
 
     render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
     this.#bodyContentElement.classList.add('hide-overflow');
+    this.#popupComponent._scrollTo(currentPopupPosition);
     document.addEventListener('keydown', this.#onEscKeyDown);
     document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
