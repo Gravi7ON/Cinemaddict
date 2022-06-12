@@ -74,18 +74,15 @@ export default class FilmsModel extends Observable {
     }
 
     try {
-      const addComment = await this.#filmsApiService.addComment(update, newComment);
-      update.comments.push(addComment);
+      const respondedComments = await this.#filmsApiService.addComment(update, newComment);
+
       this.#films = [
         ...this.#films.slice(0, filmIndex),
-        {
-          ...update,
-          comments: [...update.comments]
-        },
+        respondedComments.movie,
         ...this.#films.slice(filmIndex + 1)
       ];
 
-      this._notify(updateType, update);
+      this._notify(updateType, update, respondedComments.comments);
     } catch(err) {
       throw new Error('Can\'t add comment');
     }

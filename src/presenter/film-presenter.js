@@ -60,6 +60,8 @@ export default class FilmPresenter {
 
   getCurrentPopupPosition = () => {
     this.#curentPosition = this.#popupComponent._currentTopPosition;
+    document.removeEventListener('keydown', this.#onEscKeyDown);
+    document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
     return this.#curentPosition;
   };
 
@@ -168,7 +170,7 @@ export default class FilmPresenter {
       notification.remove('film-details_error-notification');
     }
     document.removeEventListener('keydown', this.#onEscKeyDown);
-    document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
+    document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
     this.#mode = Mode.DEFAULT;
   };
@@ -188,7 +190,7 @@ export default class FilmPresenter {
   #onCommentSubmit = () => {
     const emotionElement = document.querySelector('#user-emoji-hidden').value;
     const commentElement = document.querySelector('.film-details__comment-input').value;
-    const getComment = () => ({
+    const createNewComment = () => ({
       'comment': commentElement,
       'emotion': emotionElement
     });
@@ -197,7 +199,7 @@ export default class FilmPresenter {
       UpdateType.MAJOR,
       {...this.#film},
       null,
-      getComment());
+      createNewComment());
   };
 
   #onEscKeyDown = (evt) => {
@@ -211,10 +213,6 @@ export default class FilmPresenter {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === 'Enter') {
       evt.preventDefault();
       this.#onCommentSubmit();
-
-      const currentPopupPosition = document.querySelector('.film-details').scrollHeight;
-      const newPopup = document.querySelector('.film-details');
-      newPopup.scrollTo(0, currentPopupPosition);
     }
   };
 }
