@@ -59,7 +59,9 @@ export default class FilmPresenter {
   };
 
   getCurrentPopupPosition = () => {
-    this.#curentPosition = this.#popupComponent._currentTopPosition;
+    if (!this.#curentPosition) {
+      this.#curentPosition = this.#popupComponent._currentTopPosition;
+    }
     document.removeEventListener('keydown', this.#onEscKeyDown);
     document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
     return this.#curentPosition;
@@ -212,6 +214,7 @@ export default class FilmPresenter {
   #onCommandControlEnterKeySubmit = (evt) => {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === 'Enter') {
       evt.preventDefault();
+      this.#curentPosition = this.#popupComponent.element.scrollHeight;
       this.#onCommentSubmit();
     }
   };
