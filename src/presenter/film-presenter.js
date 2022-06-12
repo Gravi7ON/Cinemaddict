@@ -2,7 +2,6 @@ import {RenderPosition, render, remove} from '../framework/render.js';
 import {Films, Mode, UpdateType, UserAction} from '../const.js';
 import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
-import {nanoid} from 'nanoid';
 
 export default class FilmPresenter {
   #filmCardComponent = null;
@@ -190,10 +189,7 @@ export default class FilmPresenter {
     const emotionElement = document.querySelector('#user-emoji-hidden').value;
     const commentElement = document.querySelector('.film-details__comment-input').value;
     const getComment = () => ({
-      'id': nanoid(),
-      'author': 'Ilya O\'Reilly',
       'comment': commentElement,
-      'date': '2019-05-11T16:12:32.554Z',
       'emotion': emotionElement
     });
     this.#changeData(

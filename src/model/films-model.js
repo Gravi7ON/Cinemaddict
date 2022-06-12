@@ -66,24 +66,28 @@ export default class FilmsModel extends Observable {
     this._notify(updateType, update);
   };
 
-  addComment = (updateType, update, newComment) => {
+  addComment = async (updateType, update, newComment) => {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
 
     if (!newComment.comment || !newComment.emotion) {
       return;
     }
 
-    update.comments.push(newComment);
+    try {
+      const addComment = await this.#filmsApiService.addComment(update, newComment);
+      update.comments.push(addComment);
+      this.#films = [
+        ...this.#films.slice(0, filmIndex),
+        {
+          ...update,
+          comments: [...update.comments]
+        },
+        ...this.#films.slice(filmIndex + 1)
+      ];
 
-    this.#films = [
-      ...this.#films.slice(0, filmIndex),
-      {
-        ...update,
-        comments: [...update.comments]
-      },
-      ...this.#films.slice(filmIndex + 1)
-    ];
-
-    this._notify(updateType, update);
+      this._notify(updateType, update);
+    } catch(err) {
+      throw new Error('Can\'t add comment');
+    }
   };
 }
