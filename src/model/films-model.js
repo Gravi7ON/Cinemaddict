@@ -78,7 +78,7 @@ export default class FilmsModel extends Observable {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
 
     if (!newComment.comment || !newComment.emotion) {
-      return;
+      throw new Error('Can\'t add unexisting comment or emotion');
     }
 
     try {

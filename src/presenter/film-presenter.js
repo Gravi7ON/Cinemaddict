@@ -49,7 +49,7 @@ export default class FilmPresenter {
     }
   };
 
-  rerenderPopup = (preLoadComments, currentPopupPosition) => {
+  rerenderPopup = (preLoadComments = [], currentPopupPosition) => {
     this.#renderPopupOnCardClick(preLoadComments, currentPopupPosition);
   };
 
