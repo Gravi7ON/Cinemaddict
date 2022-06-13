@@ -4,9 +4,9 @@ import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
 
 export default class FilmPresenter {
-  #filmCardComponent = null;
+  _filmCardComponent = null;
+  _popupComponent = null;
   #filmsContainer = null;
-  #popupComponent = null;
 
   #changeData = null;
   #changeMode = null;
@@ -29,22 +29,22 @@ export default class FilmPresenter {
   init = (card, typeList) => {
     this.#film = card;
 
-    this.#filmCardComponent = new MovieCardView(card);
+    this._filmCardComponent = new MovieCardView(card);
 
-    this.#filmCardComponent.setElementClick(this.#renderPopupOnCardClick);
-    this.#filmCardComponent.setWatchlistElementClick(this.#onWatchlistClick);
-    this.#filmCardComponent.setWatchedElementClick(this.#onWatchedClick);
-    this.#filmCardComponent.setFavoriteElementClick(this.#onFavoriteClick);
+    this._filmCardComponent.setElementClick(this.#renderPopupOnCardClick);
+    this._filmCardComponent.setWatchlistElementClick(this.#onWatchlistClick);
+    this._filmCardComponent.setWatchedElementClick(this.#onWatchedClick);
+    this._filmCardComponent.setFavoriteElementClick(this.#onFavoriteClick);
 
     switch (typeList) {
       case Films.RATED_LIST:
-        render(this.#filmCardComponent, this.#filmsContainer.element);
+        render(this._filmCardComponent, this.#filmsContainer.element);
         break;
       case Films.COMMENTED_LIST:
-        render(this.#filmCardComponent, this.#filmsContainer.element);
+        render(this._filmCardComponent, this.#filmsContainer.element);
         break;
       default:
-        render(this.#filmCardComponent, this.#filmsContainer.element);
+        render(this._filmCardComponent, this.#filmsContainer.element);
         break;
     }
   };
@@ -54,13 +54,13 @@ export default class FilmPresenter {
   };
 
   destroy = () => {
-    remove(this.#filmCardComponent);
-    remove(this.#popupComponent);
+    remove(this._filmCardComponent);
+    remove(this._popupComponent);
   };
 
   getCurrentPopupPosition = () => {
     if (!this.#curentPosition) {
-      this.#curentPosition = this.#popupComponent._currentTopPosition;
+      this.#curentPosition = this._popupComponent._currentTopPosition;
     }
     document.removeEventListener('keydown', this.#onEscKeyDown);
     document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
@@ -75,27 +75,27 @@ export default class FilmPresenter {
   };
 
   #renderPopupOnCardClick = async (comments, currentPopupPosition) => {
-    if (this.#popupComponent !== null) {
-      this.#popupComponent.removeElement();
+    if (this._popupComponent !== null) {
+      this._popupComponent.removeElement();
     }
 
     if (comments) {
-      this.#popupComponent = new PopupView(this.#film, comments);
+      this._popupComponent = new PopupView(this.#film, comments);
     } else {
       const firstLoad = await this.#loadComments(this.#film.id);
-      this.#popupComponent = new PopupView(this.#film, firstLoad);
+      this._popupComponent = new PopupView(this.#film, firstLoad);
     }
 
-    this.#popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
-    this.#popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
-    this.#popupComponent.setWatchedElementClick(this.#onPopupWatchedClick);
-    this.#popupComponent.setFavoriteElementClick(this.#onPopupFavoriteClick);
-    this.#popupComponent.setButtonDeleteCommentClick(this.#onDeleteCommentButtonClick);
-    this.#popupComponent.setEmotionElementChange(this.#onEmotionChange);
+    this._popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
+    this._popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
+    this._popupComponent.setWatchedElementClick(this.#onPopupWatchedClick);
+    this._popupComponent.setFavoriteElementClick(this.#onPopupFavoriteClick);
+    this._popupComponent.setButtonDeleteCommentClick(this.#onDeleteCommentButtonClick);
+    this._popupComponent.setEmotionElementChange(this.#onEmotionChange);
 
-    render(this.#popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
+    render(this._popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
     this.#bodyContentElement.classList.add('hide-overflow');
-    this.#popupComponent._scrollTo(currentPopupPosition);
+    this._popupComponent._scrollTo(currentPopupPosition);
     document.addEventListener('keydown', this.#onEscKeyDown);
     document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
@@ -164,7 +164,7 @@ export default class FilmPresenter {
   };
 
   #closePopupOnButtonClick = () => {
-    this.#popupComponent.removeElement();
+    this._popupComponent.removeElement();
 
     this.#bodyContentElement.classList.remove('hide-overflow');
     const notification = this.#bodyContentElement.querySelector('.film-details_error-notification');
@@ -214,7 +214,7 @@ export default class FilmPresenter {
   #onCommandControlEnterKeySubmit = (evt) => {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === 'Enter') {
       evt.preventDefault();
-      this.#curentPosition = this.#popupComponent.element.scrollHeight;
+      this.#curentPosition = this._popupComponent.element.scrollTop;
       this.#onCommentSubmit();
     }
   };

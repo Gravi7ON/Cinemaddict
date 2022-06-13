@@ -10,10 +10,11 @@ import UserProfileView from '../view/user-profile-view.js';
 import FilmAmountView from '../view/film-amount-view.js';
 import FilmPresenter from './film-presenter.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortFilmsDate, sortFilmsRating} from '../utils/film.js';
 import {filter} from '../utils/filter.js';
-import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType} from '../const.js';
+import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, TimeLimit} from '../const.js';
 
 export default class FilmsPresenter {
   #boardContainer = null;
@@ -42,6 +43,7 @@ export default class FilmsPresenter {
   #filmsTopRatedList = new FilmsTopRatedListView();
   #filmsMostCommentedList = new FilmsMostCommentedListView();
   #loadingComponent = new LoadingView();
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
   #filmPresenter = new Map();
   #filmRatedPresenter = new Map();
   #filmCommentedPresenter = new Map();
@@ -239,18 +241,61 @@ export default class FilmsPresenter {
     }
   };
 
-  #onViewAction = (actionType, updateType, update, commentId, newCommnet) => {
+  #onViewAction = async (actionType, updateType, update, commentId, newCommnet) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch {
+          if (!document.querySelector('.film-details')) {
+            this.#filmPresenter.get(update.id)._filmCardComponent.shake();
+          } else {
+            this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__controls').classList.add('shake');
+            setTimeout(() => {
+              this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__controls').classList.remove('shake');
+            }, 600);
+          }
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmsModel.deleteComment(updateType, update, commentId);
+        try {
+          const deletingComment = document.getElementById(`${commentId}`);
+          deletingComment.textContent = 'Deleting';
+          deletingComment.disabled = true;
+          await this.#filmsModel.deleteComment(updateType, update, commentId);
+        } catch {
+          const deletingComment = document.getElementById(`${commentId}`);
+          deletingComment.textContent = 'Delete';
+          deletingComment.disabled = false;
+          deletingComment.closest('.film-details__comment').classList.add('shake');
+          setTimeout(() => {
+            deletingComment.closest('.film-details__comment').classList.remove('shake');
+          }, 600);
+        }
         break;
       case UserAction.ADD_COMMENT:
-        this.#filmsModel.addComment(updateType, update, newCommnet);
+        try {
+          this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__comment-input').disabled = true;
+          this.#filmPresenter.get(update.id)._popupComponent.element.querySelectorAll('.film-details__emoji-item').forEach((element) => {
+            element.disabled = true;
+          });
+          await this.#filmsModel.addComment(updateType, update, newCommnet);
+        } catch {
+          this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__comment-input').disabled = false;
+          this.#filmPresenter.get(update.id)._popupComponent.element.querySelectorAll('.film-details__emoji-item').forEach((element) => {
+            element.disabled = false;
+          });
+          this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__new-comment').classList.add('shake');
+          setTimeout(() => {
+            this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__new-comment').classList.remove('shake');
+          }, 600);
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #onModelEvent = (updateType, update, comments) => {
