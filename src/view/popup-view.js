@@ -255,6 +255,40 @@ export default class PopupView extends AbstractStatefulView {
     this._currentTopPosition = 0;
   };
 
+  _catchErrorUpdateFilm = () => {
+    this.shake(this.buttonsControl);
+  };
+
+  _checkErrorDeleteComment = (update, commentId, isDeleteng, isError) => {
+    const deletingCommentButton = this.getbuttonDeleteComment(commentId);
+    deletingCommentButton.textContent = isDeleteng ? 'Deleting' : 'Delete';
+    deletingCommentButton.disabled = isDeleteng ? isDeleteng : false;
+
+    if (!isError) {
+      return;
+    }
+
+    this.shake(this.deleteCommentBlock);
+  };
+
+  _checkErrorAddComment = (isAdding, isError, err, uiBlocker) => {
+    const textArea = this.textArea;
+    const emojis = this.emojiButton;
+    textArea.disabled = isAdding ? isAdding : false;
+    emojis.forEach((element) => {
+      element.disabled = isAdding ? isAdding : false;
+    });
+
+    if (!isError) {
+      return;
+    }
+
+    const commentForm = this.commentForm;
+    this.shake(commentForm);
+    uiBlocker.unblock();
+    throw new Error(err);
+  };
+
   #onClick = (evt) => {
     evt.preventDefault();
     this._callback.closeButtonClick();

@@ -241,47 +241,9 @@ export default class FilmsPresenter {
     }
   };
 
-  #catchErrorUpdateFilm = (update) => {
+  #onViewAction = async (actionType, updateType, update, commentId, newCommnet) => {
     const currentFilmComponent = this.#filmPresenter.get(update.id)._filmCardComponent;
     const currentPopupComponent = this.#filmPresenter.get(update.id)._popupComponent;
-    if (!currentPopupComponent) {
-      currentFilmComponent.shake(currentFilmComponent.element);
-    } else {
-      currentPopupComponent.shake(currentPopupComponent.buttonsControl);
-    }
-  };
-
-  #checkErrorDeleteComment = (update, commentId, isDeleteng, isError) => {
-    const currentPopupComponent = this.#filmPresenter.get(update.id)._popupComponent;
-    const deletingCommentButton = currentPopupComponent.getbuttonDeleteComment(commentId);
-    const delitingCommentBlock = currentPopupComponent.deleteCommentBlock;
-    deletingCommentButton.textContent = isDeleteng ? 'Deleting' : 'Delete';
-    deletingCommentButton.disabled = isDeleteng ? isDeleteng : false;
-
-    if (isError) {
-      currentPopupComponent.shake(delitingCommentBlock);
-    }
-  };
-
-  #checkErrorAddComment = (update, isAdding, isError, err) => {
-    const textArea = this.#filmPresenter.get(update.id)._popupComponent.textArea;
-    const emojis = this.#filmPresenter.get(update.id)._popupComponent.emojiButton;
-    textArea.disabled = isAdding ? isAdding : false;
-    emojis.forEach((element) => {
-      element.disabled = isAdding ? isAdding : false;
-    });
-
-    if (!isError) {
-      return;
-    }
-
-    const commentForm = this.#filmPresenter.get(update.id)._popupComponent.commentForm;
-    this.#filmPresenter.get(update.id)._popupComponent.shake(commentForm);
-    this.#uiBlocker.unblock();
-    throw new Error(err);
-  };
-
-  #onViewAction = async (actionType, updateType, update, commentId, newCommnet) => {
     this.#uiBlocker.block();
 
     switch (actionType) {
@@ -289,23 +251,27 @@ export default class FilmsPresenter {
         try {
           await this.#filmsModel.updateFilm(updateType, update);
         } catch {
-          this.#catchErrorUpdateFilm(update);
+          if (!currentPopupComponent){
+            currentFilmComponent.shake(currentFilmComponent.element);
+          } else {
+            this.#filmPresenter.get(update.id)._popupComponent._catchErrorUpdateFilm();
+          }
         }
         break;
       case UserAction.DELETE_COMMENT:
         try {
-          this.#checkErrorDeleteComment(update, commentId, true);
+          currentPopupComponent._checkErrorDeleteComment(update, commentId, true);
           await this.#filmsModel.deleteComment(updateType, update, commentId);
         } catch {
-          this.#checkErrorDeleteComment(update, commentId, false, true);
+          currentPopupComponent._checkErrorDeleteComment(update, commentId, false, true);
         }
         break;
       case UserAction.ADD_COMMENT:
         try {
-          this.#checkErrorAddComment(update, true);
+          currentPopupComponent._checkErrorAddComment(true, false);
           await this.#filmsModel.addComment(updateType, update, newCommnet);
         } catch(err) {
-          this.#checkErrorAddComment(update, false, true, err);
+          currentPopupComponent._checkErrorAddComment(false, true, err, this.#uiBlocker);
         }
         break;
     }
