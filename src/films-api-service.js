@@ -1,5 +1,5 @@
 import ApiService from './framework/api-service.js';
-import {showErrorLoadWrapper} from './utils/film.js';
+import {errorLoadWrapper} from './utils/film.js';
 
 const Method = {
   GET: 'GET',
@@ -26,7 +26,7 @@ export default class FilmsApiService extends ApiService {
       return response.json();
     })
     .catch((err) => {
-      showErrorLoadWrapper(err);
+      errorLoadWrapper.showError(err);
     });
 
   updateFilm = async (film) => {

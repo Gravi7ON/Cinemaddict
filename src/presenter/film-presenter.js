@@ -2,6 +2,7 @@ import {RenderPosition, render, remove} from '../framework/render.js';
 import {Films, Mode, UpdateType, UserAction} from '../const.js';
 import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
+import {errorLoadWrapper} from '../utils/film.js';
 
 export default class FilmPresenter {
   _filmCardComponent = null;
@@ -16,7 +17,7 @@ export default class FilmPresenter {
   #curentPosition = null;
   #mode = Mode.DEFAULT;
 
-  #bodyContentElement = document.body;
+  _bodyContentElement = document.body;
   #footerContentElement  = document.querySelector('.footer');
 
   constructor(filmsContainer, changeData, changeMode, loadComments) {
@@ -62,21 +63,26 @@ export default class FilmPresenter {
     if (!this.#curentPosition) {
       this.#curentPosition = this._popupComponent._currentTopPosition;
     }
+
+    return this.#curentPosition;
+  };
+
+  removePopupKeysHandlers = () => {
     document.removeEventListener('keydown', this.#onEscKeyDown);
     document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
-    return this.#curentPosition;
   };
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
       this.#closePopupOnButtonClick();
-      this.#bodyContentElement.classList.add('hide-overflow');
+      this._bodyContentElement.classList.add('hide-overflow');
     }
   };
 
   #renderPopupOnCardClick = async (comments, currentPopupPosition) => {
     if (this._popupComponent !== null) {
       this._popupComponent.removeElement();
+      this.#deleteNotification();
     }
 
     if (comments) {
@@ -94,7 +100,7 @@ export default class FilmPresenter {
     this._popupComponent.setEmotionElementChange(this.#onEmotionChange);
 
     render(this._popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
-    this.#bodyContentElement.classList.add('hide-overflow');
+    this._bodyContentElement.classList.add('hide-overflow');
     this._popupComponent._scrollTo(currentPopupPosition);
     document.addEventListener('keydown', this.#onEscKeyDown);
     document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
@@ -163,14 +169,19 @@ export default class FilmPresenter {
       evt.target.id);
   };
 
+  #deleteNotification = () => {
+    const notification = this._bodyContentElement.querySelector('.film-details_error-notification');
+    if (notification) {
+      notification.remove();
+      errorLoadWrapper.deleteTimeout();
+    }
+  };
+
   #closePopupOnButtonClick = () => {
     this._popupComponent.removeElement();
 
-    this.#bodyContentElement.classList.remove('hide-overflow');
-    const notification = this.#bodyContentElement.querySelector('.film-details_error-notification');
-    if (notification) {
-      notification.remove('film-details_error-notification');
-    }
+    this._bodyContentElement.classList.remove('hide-overflow');
+    this.#deleteNotification();
     document.removeEventListener('keydown', this.#onEscKeyDown);
     document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 

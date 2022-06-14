@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import {DELETE_COUNT, UpdateType} from '../const.js';
+import {UpdateType} from '../const.js';
 
 export default class FilmsModel extends Observable {
   #filmsApiService = null;
@@ -52,8 +52,6 @@ export default class FilmsModel extends Observable {
   deleteComment = async (updateType, update, commentId) => {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
     const deletingComment = update.comments.find((comment) => comment === commentId);
-    const indexDeletingComment = update.comments.findIndex((comment) => comment === commentId);
-    update.comments.splice(indexDeletingComment, DELETE_COUNT);
 
     try {
       await this.#filmsApiService.deleteComment(deletingComment);
@@ -63,7 +61,7 @@ export default class FilmsModel extends Observable {
         ...this.#films.slice(0, filmIndex),
         {
           ...update,
-          comments: [...update.comments]
+          comments: update.comments.filter((comment) => comment !== commentId)
         },
         ...this.#films.slice(filmIndex + 1)
       ];

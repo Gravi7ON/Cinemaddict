@@ -242,47 +242,43 @@ export default class FilmsPresenter {
   };
 
   #catchErrorUpdateFilm = (update) => {
-    if (!document.body.querySelector('.film-details__controls')) {
-      this.#filmPresenter.get(update.id)._filmCardComponent.shake();
+    const currentFilmComponent = this.#filmPresenter.get(update.id)._filmCardComponent;
+    const currentPopupComponent = this.#filmPresenter.get(update.id)._popupComponent;
+    if (!currentPopupComponent) {
+      currentFilmComponent.shake(currentFilmComponent.element);
     } else {
-      const popupButtonsControl = this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__controls');
-      popupButtonsControl.classList.add('shake');
-      setTimeout(() => {
-        popupButtonsControl.classList.remove('shake');
-      }, 600);
+      currentPopupComponent.shake(currentPopupComponent.buttonsControl);
     }
   };
 
-  #checkErrorDeleteComment = (commentId, isDeleteng, isError) => {
-    const deletingCommentButton = document.getElementById(`${commentId}`);
+  #checkErrorDeleteComment = (update, commentId, isDeleteng, isError) => {
+    const currentPopupComponent = this.#filmPresenter.get(update.id)._popupComponent;
+    const deletingCommentButton = currentPopupComponent.getbuttonDeleteComment(commentId);
+    const delitingCommentBlock = currentPopupComponent.deleteCommentBlock;
     deletingCommentButton.textContent = isDeleteng ? 'Deleting' : 'Delete';
     deletingCommentButton.disabled = isDeleteng ? isDeleteng : false;
 
     if (isError) {
-      deletingCommentButton.closest('.film-details__comment').classList.add('shake');
-      setTimeout(() => {
-        deletingCommentButton.closest('.film-details__comment').classList.remove('shake');
-      }, 600);
+      currentPopupComponent.shake(delitingCommentBlock);
     }
   };
 
   #checkErrorAddComment = (update, isAdding, isError, err) => {
-    const textArea = this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__comment-input');
-    const emojis = this.#filmPresenter.get(update.id)._popupComponent.element.querySelectorAll('.film-details__emoji-item');
+    const textArea = this.#filmPresenter.get(update.id)._popupComponent.textArea;
+    const emojis = this.#filmPresenter.get(update.id)._popupComponent.emojiButton;
     textArea.disabled = isAdding ? isAdding : false;
     emojis.forEach((element) => {
       element.disabled = isAdding ? isAdding : false;
     });
 
-    if (isError) {
-      const commentForm = this.#filmPresenter.get(update.id)._popupComponent.element.querySelector('.film-details__new-comment');
-      commentForm.classList.add('shake');
-      setTimeout(() => {
-        commentForm.classList.remove('shake');
-      }, 600);
-      this.#uiBlocker.unblock();
-      throw new Error(err);
+    if (!isError) {
+      return;
     }
+
+    const commentForm = this.#filmPresenter.get(update.id)._popupComponent.commentForm;
+    this.#filmPresenter.get(update.id)._popupComponent.shake(commentForm);
+    this.#uiBlocker.unblock();
+    throw new Error(err);
   };
 
   #onViewAction = async (actionType, updateType, update, commentId, newCommnet) => {
@@ -298,10 +294,10 @@ export default class FilmsPresenter {
         break;
       case UserAction.DELETE_COMMENT:
         try {
-          this.#checkErrorDeleteComment(commentId, true);
+          this.#checkErrorDeleteComment(update, commentId, true);
           await this.#filmsModel.deleteComment(updateType, update, commentId);
         } catch {
-          this.#checkErrorDeleteComment(commentId, false, true);
+          this.#checkErrorDeleteComment(update, commentId, false, true);
         }
         break;
       case UserAction.ADD_COMMENT:
@@ -330,6 +326,7 @@ export default class FilmsPresenter {
         break;
       case UpdateType.MAJOR:
         this.#currentPopupPosition = this.#filmPresenter.get(update.id).getCurrentPopupPosition();
+        this.#filmPresenter.get(update.id).removePopupKeysHandlers();
         this.#clearFilmList({rerenderUserProfile: true});
         this.#renderUserProfile();
         this.#renderCommonFilms();
