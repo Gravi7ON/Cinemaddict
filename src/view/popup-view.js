@@ -153,6 +153,12 @@ const createPopupTemplate = (popup, comments) => {
 export default class PopupView extends AbstractStatefulView {
   #film = null;
   #comments = [];
+  #buttonsControl = null;
+  #buttonDeleteComment = null;
+  #deleteCommentBlock = null;
+  #textArea = null;
+  #emojiButton = null;
+  #commentForm = null;
   _currentTopPosition = null;
 
   constructor(popup, comments = []) {
@@ -163,6 +169,50 @@ export default class PopupView extends AbstractStatefulView {
 
   get template() {
     return createPopupTemplate(this.#film, this.#comments);
+  }
+
+  get buttonsControl() {
+    if (!this.#buttonsControl) {
+      this.#buttonsControl = this.element.querySelector('.film-details__controls');
+    }
+
+    return this.#buttonsControl;
+  }
+
+  get deleteCommentBlock() {
+    this.#deleteCommentBlock = this.#buttonDeleteComment.closest('.film-details__comment');
+
+    return this.#deleteCommentBlock;
+  }
+
+  get textArea() {
+    if (!this.#textArea) {
+      this.#textArea = this.element.querySelector('.film-details__comment-input');
+    }
+
+    return this.#textArea;
+  }
+
+  get emojiButton() {
+    if (!this.#emojiButton) {
+      this.#emojiButton = this.element.querySelectorAll('.film-details__emoji-item');
+    }
+
+    return this.#emojiButton;
+  }
+
+  get commentForm() {
+    if (!this.#commentForm) {
+      this.#commentForm = this.element.querySelector('.film-details__new-comment');
+    }
+
+    return this.#commentForm;
+  }
+
+  getbuttonDeleteComment(commentId) {
+    this.#buttonDeleteComment = this.element.querySelector(`button[id='${commentId}']`);
+
+    return this.#buttonDeleteComment;
   }
 
   setButtonCloseElementClick = (callback) => {
@@ -203,6 +253,40 @@ export default class PopupView extends AbstractStatefulView {
   _scrollTo = (currentPosition) => {
     this.element.scrollTo(0, currentPosition);
     this._currentTopPosition = 0;
+  };
+
+  _catchErrorUpdateFilm = () => {
+    this.shake(this.buttonsControl);
+  };
+
+  _checkErrorDeleteComment = (update, commentId, isDeleteng, isError) => {
+    const deletingCommentButton = this.getbuttonDeleteComment(commentId);
+    deletingCommentButton.textContent = isDeleteng ? 'Deleting' : 'Delete';
+    deletingCommentButton.disabled = isDeleteng ? isDeleteng : false;
+
+    if (!isError) {
+      return;
+    }
+
+    this.shake(this.deleteCommentBlock);
+  };
+
+  _checkErrorAddComment = (isAdding, isError, err, uiBlocker) => {
+    const textArea = this.textArea;
+    const emojis = this.emojiButton;
+    textArea.disabled = isAdding ? isAdding : false;
+    emojis.forEach((element) => {
+      element.disabled = isAdding ? isAdding : false;
+    });
+
+    if (!isError) {
+      return;
+    }
+
+    const commentForm = this.commentForm;
+    this.shake(commentForm);
+    uiBlocker.unblock();
+    throw new Error(err);
   };
 
   #onClick = (evt) => {

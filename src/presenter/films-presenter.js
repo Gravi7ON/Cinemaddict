@@ -10,10 +10,11 @@ import UserProfileView from '../view/user-profile-view.js';
 import FilmAmountView from '../view/film-amount-view.js';
 import FilmPresenter from './film-presenter.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortFilmsDate, sortFilmsRating} from '../utils/film.js';
 import {filter} from '../utils/filter.js';
-import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType} from '../const.js';
+import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, TimeLimit} from '../const.js';
 
 export default class FilmsPresenter {
   #boardContainer = null;
@@ -42,6 +43,7 @@ export default class FilmsPresenter {
   #filmsTopRatedList = new FilmsTopRatedListView();
   #filmsMostCommentedList = new FilmsMostCommentedListView();
   #loadingComponent = new LoadingView();
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
   #filmPresenter = new Map();
   #filmRatedPresenter = new Map();
   #filmCommentedPresenter = new Map();
@@ -239,18 +241,42 @@ export default class FilmsPresenter {
     }
   };
 
-  #onViewAction = (actionType, updateType, update, commentId, newCommnet) => {
+  #onViewAction = async (actionType, updateType, update, commentId, newCommnet) => {
+    const currentFilmComponent = this.#filmPresenter.get(update.id)._filmCardComponent;
+    const currentPopupComponent = this.#filmPresenter.get(update.id)._popupComponent;
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch {
+          if (!currentPopupComponent){
+            currentFilmComponent.shake(currentFilmComponent.element);
+          } else {
+            this.#filmPresenter.get(update.id)._popupComponent._catchErrorUpdateFilm();
+          }
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmsModel.deleteComment(updateType, update, commentId);
+        try {
+          currentPopupComponent._checkErrorDeleteComment(update, commentId, true);
+          await this.#filmsModel.deleteComment(updateType, update, commentId);
+        } catch {
+          currentPopupComponent._checkErrorDeleteComment(update, commentId, false, true);
+        }
         break;
       case UserAction.ADD_COMMENT:
-        this.#filmsModel.addComment(updateType, update, newCommnet);
+        try {
+          currentPopupComponent._checkErrorAddComment(true, false);
+          await this.#filmsModel.addComment(updateType, update, newCommnet);
+        } catch(err) {
+          currentPopupComponent._checkErrorAddComment(false, true, err, this.#uiBlocker);
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #onModelEvent = (updateType, update, comments) => {
@@ -266,6 +292,7 @@ export default class FilmsPresenter {
         break;
       case UpdateType.MAJOR:
         this.#currentPopupPosition = this.#filmPresenter.get(update.id).getCurrentPopupPosition();
+        this.#filmPresenter.get(update.id).removePopupKeysHandlers();
         this.#clearFilmList({rerenderUserProfile: true});
         this.#renderUserProfile();
         this.#renderCommonFilms();

@@ -40,4 +40,9 @@ const FilterType = {
   FAVORITES: 'favorites'
 };
 
-export {Films, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, UPDATE_COUNT, DELETE_COUNT};
+const TimeLimit = {
+  LOWER_LIMIT: 200,
+  UPPER_LIMIT: 450,
+};
+
+export {Films, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, UPDATE_COUNT, DELETE_COUNT, TimeLimit};

@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import {DELETE_COUNT, UpdateType} from '../const.js';
+import {UpdateType} from '../const.js';
 
 export default class FilmsModel extends Observable {
   #filmsApiService = null;
@@ -49,41 +49,48 @@ export default class FilmsModel extends Observable {
     }
   };
 
-  deleteComment = (updateType, update, commentId) => {
+  deleteComment = async (updateType, update, commentId) => {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
-    const indexDeletingComment = update.comments.findIndex((comment) => comment.id === commentId);
-    update.comments.splice(indexDeletingComment, DELETE_COUNT);
+    const deletingComment = update.comments.find((comment) => comment === commentId);
 
-    this.#films = [
-      ...this.#films.slice(0, filmIndex),
-      {
-        ...update,
-        comments: [...update.comments]
-      },
-      ...this.#films.slice(filmIndex + 1)
-    ];
+    try {
+      await this.#filmsApiService.deleteComment(deletingComment);
+      const comments = await this.#filmsApiService.getComments(update.id);
 
-    this._notify(updateType, update);
+      this.#films = [
+        ...this.#films.slice(0, filmIndex),
+        {
+          ...update,
+          comments: update.comments.filter((comment) => comment !== commentId)
+        },
+        ...this.#films.slice(filmIndex + 1)
+      ];
+
+      this._notify(updateType, update, comments);
+    } catch(err) {
+      throw new Error('Can\'t delete comment');
+    }
   };
 
-  addComment = (updateType, update, newComment) => {
+  addComment = async (updateType, update, newComment) => {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
 
     if (!newComment.comment || !newComment.emotion) {
-      return;
+      throw new Error('Can\'t add unexisting comment or emotion');
     }
 
-    update.comments.push(newComment);
+    try {
+      const respondedComments = await this.#filmsApiService.addComment(update, newComment);
 
-    this.#films = [
-      ...this.#films.slice(0, filmIndex),
-      {
-        ...update,
-        comments: [...update.comments]
-      },
-      ...this.#films.slice(filmIndex + 1)
-    ];
+      this.#films = [
+        ...this.#films.slice(0, filmIndex),
+        respondedComments.movie,
+        ...this.#films.slice(filmIndex + 1)
+      ];
 
-    this._notify(updateType, update);
+      this._notify(updateType, update, respondedComments.comments);
+    } catch(err) {
+      throw new Error('Can\'t add comment');
+    }
   };
 }

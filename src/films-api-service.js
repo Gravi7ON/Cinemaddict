@@ -1,5 +1,5 @@
 import ApiService from './framework/api-service.js';
-import {showErrorLoadWrapper} from './utils/film.js';
+import {errorLoadWrapper} from './utils/film.js';
 
 const Method = {
   GET: 'GET',
@@ -14,7 +14,7 @@ export default class FilmsApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  getComments = (filmId) => fetch(`${this._endPoint}/comments/${filmId}`, {
+  getComments = async (filmId) => await fetch(`${this._endPoint}/comments/${filmId}`, {
     headers: {
       'Authorization': `${this._authorization}`
     }})
@@ -26,7 +26,7 @@ export default class FilmsApiService extends ApiService {
       return response.json();
     })
     .catch((err) => {
-      showErrorLoadWrapper(err);
+      errorLoadWrapper.showError(err);
     });
 
   updateFilm = async (film) => {
@@ -40,5 +40,27 @@ export default class FilmsApiService extends ApiService {
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
+  };
+
+  addComment = async (film, newComment) => {
+    const response = await this._load({
+      url: `comments/${film.id}`,
+      method: Method.POST,
+      body: JSON.stringify(newComment),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
+  };
+
+  deleteComment = async (commentId) => {
+    const response = await this._load({
+      url: `comments/${commentId}`,
+      method: Method.DELETE,
+    });
+
+    return response;
   };
 }
