@@ -12,7 +12,7 @@ import FilmPresenter from './film-presenter.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import {render, remove, RenderPosition} from '../framework/render.js';
-import {sortFilmsDate, sortFilmsRating} from '../utils/film.js';
+import {sortFilmsDate, sortFilmsRating, sortFilmsComments, getRandomUniquePositiveInteger} from '../utils/film.js';
 import {filter} from '../utils/filter.js';
 import {Films, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, TimeLimit} from '../const.js';
 
@@ -89,8 +89,8 @@ export default class FilmsPresenter {
     this.#renderUserProfile();
     this.#renderCommonFilms();
     this.#renderFilmAmount(this.films);
-    // this.#renderFilmsRatedList();
-    // this.#renderFilmsCommentedList();
+    this.#renderFilmsRatedList();
+    this.#renderFilmsCommentedList();
   };
 
   #renderUserProfile = () => {
@@ -180,21 +180,76 @@ export default class FilmsPresenter {
   };
 
   #renderFilmsRatedList = () => {
+    const films = [...this.#filmsModel.films];
+    const isAllFilmsHaveRatingZero = (movies) => movies.every((movie) => movie.total_rating === 0);
+    const isAllFilmsHaveRatingSame = (movies) => movies.every((movie) => movie.total_rating === movies[0]);
+
+    if (isAllFilmsHaveRatingZero(films)) {
+      return;
+    }
+
+    if (isAllFilmsHaveRatingSame(films)) {
+      const randomRated = [];
+
+      for (let i = 0; i < 2; i++) {
+        randomRated.push(films[getRandomUniquePositiveInteger(0, films.length - 1)()]);
+      }
+
+      render(this.#filmsTopRatedList, this.#filmsBoard.element);
+      render(this.#filmsTopRatedContainer, this.#filmsTopRatedList.element);
+
+      for (const filmCard of randomRated) {
+        this.#renderFilm(filmCard, Films.RATED_LIST, this.#filmsTopRatedContainer);
+      }
+      return;
+    }
+
     render(this.#filmsTopRatedList, this.#filmsBoard.element);
     render(this.#filmsTopRatedContainer, this.#filmsTopRatedList.element);
 
-    for (const filmCard of this.films.slice(0, 2)) {
+    for (const filmCard of films.sort(sortFilmsRating).slice(0, 2)) {
       this.#renderFilm(filmCard, Films.RATED_LIST, this.#filmsTopRatedContainer);
     }
   };
 
   #renderFilmsCommentedList = () => {
+    const films = [...this.#filmsModel.films];
+    const isAllFilmsHaveCommentsZero = (movies) => movies.every((film) => film.comments.length === 0);
+    const isAllFilmsHaveCommentsSame = (movies) => movies.every((movie) => movie.comments.length === movies[0].comments.length);
+
+    if (isAllFilmsHaveCommentsZero(films)) {
+      return;
+    }
+
+    if (isAllFilmsHaveCommentsSame(films)) {
+      const randomCommented = [];
+
+      for (let i = 0; i < 2; i++) {
+        randomCommented.push(films[getRandomUniquePositiveInteger(0, films.length - 1)()]);
+      }
+
+      render(this.#filmsMostCommentedList, this.#filmsBoard.element);
+      render(this.#filmsMostCommentedContainer, this.#filmsMostCommentedList.element);
+
+      for (const filmCard of randomCommented) {
+        this.#renderFilm(filmCard, Films.COMMENTED_LIST, this.#filmsMostCommentedContainer);
+      }
+      return;
+    }
+
     render(this.#filmsMostCommentedList, this.#filmsBoard.element);
     render(this.#filmsMostCommentedContainer, this.#filmsMostCommentedList.element);
 
-    for (const filmCard of this.films.slice(0, 2)) {
+    for (const filmCard of films.sort(sortFilmsComments).slice(0, 2)) {
       this.#renderFilm(filmCard, Films.COMMENTED_LIST, this.#filmsMostCommentedContainer);
     }
+  };
+
+  #removeAdditionalsLists = () => {
+    remove(this.#filmsTopRatedList);
+    remove(this.#filmsTopRatedContainer);
+    remove(this.#filmsMostCommentedList);
+    remove(this.#filmsMostCommentedContainer);
   };
 
   #clearFilmList = ({resetRenderedFilmsCount = false, resetSortType = false, rerenderUserProfile = false} = {}) => {
@@ -202,10 +257,15 @@ export default class FilmsPresenter {
 
     this.#filmPresenter.forEach((presenter) => presenter.destroy());
     this.#filmPresenter.clear();
+    this.#filmRatedPresenter.forEach((presenter) => presenter.destroy());
+    this.#filmRatedPresenter.clear();
+    this.#filmCommentedPresenter.forEach((presenter) => presenter.destroy());
+    this.#filmCommentedPresenter.clear();
 
     remove(this.#sortMenuComponent);
     remove(this.#showMoreButtonComponent);
     remove(this.#filterMenu);
+    this.#removeAdditionalsLists();
 
     if (rerenderUserProfile) {
       remove(this.#userProfile);
@@ -284,11 +344,15 @@ export default class FilmsPresenter {
       case UpdateType.PRE_MINOR:
         this.#clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
         this.#renderCommonFilms();
+        this.#renderFilmsRatedList();
+        this.#renderFilmsCommentedList();
         break;
       case UpdateType.MINOR:
         this.#clearFilmList({rerenderUserProfile: true});
         this.#renderUserProfile();
         this.#renderCommonFilms();
+        this.#renderFilmsRatedList();
+        this.#renderFilmsCommentedList();
         break;
       case UpdateType.MAJOR:
         this.#currentPopupPosition = this.#filmPresenter.get(update.id).getCurrentPopupPosition();
@@ -296,7 +360,11 @@ export default class FilmsPresenter {
         this.#clearFilmList({rerenderUserProfile: true});
         this.#renderUserProfile();
         this.#renderCommonFilms();
+        this.#renderFilmsRatedList();
+        this.#renderFilmsCommentedList();
         this.#filmPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
+        // this.#filmRatedPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
+        // this.#filmCommentedPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
         break;
       case UpdateType.INIT:
         remove(this.#loadingComponent);
@@ -312,5 +380,7 @@ export default class FilmsPresenter {
     this.#currentSortType = sortType;
     this.#clearFilmList({resetRenderedFilmsCount: true});
     this.#renderCommonFilms();
+    this.#renderFilmsRatedList();
+    this.#renderFilmsCommentedList();
   };
 }

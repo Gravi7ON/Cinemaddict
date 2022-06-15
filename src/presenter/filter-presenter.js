@@ -40,6 +40,10 @@ export default class FilterPresenter {
 
   #handleModelEvent = () => {
     this.init();
+    if (this.#filmsModel.films.length === 0) {
+      return;
+    }
+
     this.#filterComponent.setFilterTypeElementClick(this.#handleFilterTypeChange);
   };
 

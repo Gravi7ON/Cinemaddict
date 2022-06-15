@@ -26,6 +26,36 @@ const sortFilmsRating = (filmA, filmB) => {
   return ratingB - ratingA;
 };
 
+const sortFilmsComments = (filmA, filmB) => {
+  const ratingA = filmA.comments.length;
+  const ratingB = filmB.comments.length;
+
+  return ratingB - ratingA;
+};
+
+const getRandomPositiveInteger = (min, max) => {
+  const from = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
+  const to = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
+  return Math.floor(Math.random() * (to - from + 1) + from);
+};
+
+const getRandomUniquePositiveInteger = (min, max) => {
+  const previousValues = [];
+
+  return () => {
+    let currentValue = getRandomPositiveInteger(min, max);
+    if (previousValues.length >= (max - min + 1)) {
+      return;
+    }
+    while (previousValues.includes(currentValue)) {
+      currentValue = getRandomPositiveInteger(min, max);
+    }
+    previousValues.push(currentValue);
+
+    return currentValue;
+  };
+};
+
 const errorLoadWrapper = {
   timeoutId: null,
 
@@ -45,4 +75,4 @@ const errorLoadWrapper = {
   }
 };
 
-export {formatDate, getShortDescription, sortFilmsDate, sortFilmsRating, errorLoadWrapper};
+export {formatDate, getShortDescription, sortFilmsDate, sortFilmsRating, errorLoadWrapper, sortFilmsComments, getRandomUniquePositiveInteger};
