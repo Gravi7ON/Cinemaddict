@@ -296,17 +296,17 @@ export default class PopupView extends AbstractStatefulView {
 
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
-    this._restoreScrollForChange(this._callback.watchlistClick);
+    this._restoreScrollForChange(this._callback.watchlistClick, evt);
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
-    this._restoreScrollForChange(this._callback.watchedClick);
+    this._restoreScrollForChange(this._callback.watchedClick, evt);
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
-    this._restoreScrollForChange(this._callback.favoriteClick);
+    this._restoreScrollForChange(this._callback.favoriteClick, evt);
   };
 
   #onEmotionButtonClick = (evt) => {

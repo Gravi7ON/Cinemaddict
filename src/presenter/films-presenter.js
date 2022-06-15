@@ -301,9 +301,7 @@ export default class FilmsPresenter {
     }
   };
 
-  #onViewAction = async (actionType, updateType, update, commentId, newCommnet) => {
-    const currentFilmComponent = this.#filmPresenter.get(update.id)._filmCardComponent;
-    const currentPopupComponent = this.#filmPresenter.get(update.id)._popupComponent;
+  #switchUserAction = async (actionType, updateType, update, commentId, newCommnet, currentPopupComponent, currentFilmComponent, currentPresenter) => {
     this.#uiBlocker.block();
 
     switch (actionType) {
@@ -314,7 +312,7 @@ export default class FilmsPresenter {
           if (!currentPopupComponent){
             currentFilmComponent.shake(currentFilmComponent.element);
           } else {
-            this.#filmPresenter.get(update.id)._popupComponent._catchErrorUpdateFilm();
+            currentPresenter.get(update.id)._popupComponent._catchErrorUpdateFilm();
           }
         }
         break;
@@ -339,6 +337,26 @@ export default class FilmsPresenter {
     this.#uiBlocker.unblock();
   };
 
+  #onViewAction = (actionType, updateType, update, commentId, newCommnet, evt) => {
+    if (evt.target.closest('.films-list--rated')) {
+      const currentFilmRatedComponent = this.#filmRatedPresenter.get(update.id)._filmCardComponent;
+      const currentPopupRatedComponent = this.#filmRatedPresenter.get(update.id)._popupComponent;
+      this.#switchUserAction(actionType, updateType, update, commentId, newCommnet, currentPopupRatedComponent, currentFilmRatedComponent, this.#filmRatedPresenter);
+      return;
+    }
+
+    if (evt.target.closest('.films-list--commented')) {
+      const currentFilmCommentedComponent = this.#filmCommentedPresenter.get(update.id)._filmCardComponent;
+      const currentPopupCommentedComponent = this.#filmCommentedPresenter.get(update.id)._popupComponent;
+      this.#switchUserAction(actionType, updateType, update, commentId, newCommnet, currentPopupCommentedComponent, currentFilmCommentedComponent, this.#filmCommentedPresenter);
+      return;
+    }
+
+    const currentFilmComponent = this.#filmPresenter.get(update.id)._filmCardComponent;
+    const currentPopupComponent = this.#filmPresenter.get(update.id)._popupComponent;
+    this.#switchUserAction(actionType, updateType, update, commentId, newCommnet, currentPopupComponent, currentFilmComponent, this.#filmPresenter);
+  };
+
   #onModelEvent = (updateType, update, comments) => {
     switch (updateType) {
       case UpdateType.PRE_MINOR:
@@ -356,7 +374,9 @@ export default class FilmsPresenter {
         break;
       case UpdateType.MAJOR:
         this.#currentPopupPosition = this.#filmPresenter.get(update.id).getCurrentPopupPosition();
+        // this.#currentPopupPosition = this.#filmRatedPresenter.get(update.id).getCurrentPopupPosition();
         this.#filmPresenter.get(update.id).removePopupKeysHandlers();
+        // this.#filmRatedPresenter.get(update.id).removePopupKeysHandlers();
         this.#clearFilmList({rerenderUserProfile: true});
         this.#renderUserProfile();
         this.#renderCommonFilms();
