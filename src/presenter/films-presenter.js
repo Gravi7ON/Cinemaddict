@@ -181,6 +181,7 @@ export default class FilmsPresenter {
 
   #renderFilmsRatedList = () => {
     const films = [...this.#filmsModel.films];
+    const ratedFilms = films.sort(sortFilmsRating).slice(0, 2);
     const isAllFilmsHaveRatingZero = (movies) => movies.every((movie) => movie.total_rating === 0);
     const isAllFilmsHaveRatingSame = (movies) => movies.every((movie) => movie.total_rating === movies[0]);
 
@@ -207,13 +208,14 @@ export default class FilmsPresenter {
     render(this.#filmsTopRatedList, this.#filmsBoard.element);
     render(this.#filmsTopRatedContainer, this.#filmsTopRatedList.element);
 
-    for (const filmCard of films.sort(sortFilmsRating).slice(0, 2)) {
+    for (const filmCard of ratedFilms) {
       this.#renderFilm(filmCard, Films.RATED_LIST, this.#filmsTopRatedContainer);
     }
   };
 
   #renderFilmsCommentedList = () => {
     const films = [...this.#filmsModel.films];
+    const commentedFilms = films.sort(sortFilmsComments).slice(0, 2);
     const isAllFilmsHaveCommentsZero = (movies) => movies.every((film) => film.comments.length === 0);
     const isAllFilmsHaveCommentsSame = (movies) => movies.every((movie) => movie.comments.length === movies[0].comments.length);
 
@@ -240,7 +242,7 @@ export default class FilmsPresenter {
     render(this.#filmsMostCommentedList, this.#filmsBoard.element);
     render(this.#filmsMostCommentedContainer, this.#filmsMostCommentedList.element);
 
-    for (const filmCard of films.sort(sortFilmsComments).slice(0, 2)) {
+    for (const filmCard of commentedFilms) {
       this.#renderFilm(filmCard, Films.COMMENTED_LIST, this.#filmsMostCommentedContainer);
     }
   };
@@ -378,17 +380,19 @@ export default class FilmsPresenter {
         break;
       case UpdateType.MAJOR:
         if (typePresenter === Films.RATED_LIST) {
-          this.#currentPopupPosition = this.#filmRatedPresenter.get(update.id).getCurrentPopupPosition();
-          this.#filmRatedPresenter.get(update.id).removePopupKeysHandlers();
+          const currentFilmRatedPresenter = this.#filmRatedPresenter.get(update.id);
+          this.#currentPopupPosition = currentFilmRatedPresenter.getCurrentPopupPosition();
+          currentFilmRatedPresenter.removePopupKeysHandlers();
           this.#clearAndRenderChange();
           this.#filmRatedPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
           return;
         }
 
         if (typePresenter === Films.COMMENTED_LIST) {
-          this.#currentPopupPosition = this.#filmCommentedPresenter.get(update.id).getCurrentPopupPosition();
-          this.#filmCommentedPresenter.get(update.id).removePopupKeysHandlers();
-          this.#filmCommentedPresenter.get(update.id)._bodyContentElement.classList.remove('hide-overflow');
+          const currentFilmCommentedPresenter = this.#filmCommentedPresenter.get(update.id);
+          this.#currentPopupPosition = currentFilmCommentedPresenter.getCurrentPopupPosition();
+          currentFilmCommentedPresenter.removePopupKeysHandlers();
+          currentFilmCommentedPresenter._bodyContentElement.classList.remove('hide-overflow');
           this.#clearAndRenderChange();
           this.#filmCommentedPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
           return;
