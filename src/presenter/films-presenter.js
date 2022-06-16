@@ -341,21 +341,24 @@ export default class FilmsPresenter {
 
   #onViewAction = (actionType, updateType, update, commentId, newCommnet, typePresenter) => {
     if (typePresenter === Films.RATED_LIST) {
-      const currentFilmRatedComponent = this.#filmRatedPresenter.get(update.id)._filmCardComponent;
-      const currentPopupRatedComponent = this.#filmRatedPresenter.get(update.id)._popupComponent;
+      const currentFilmRatedPresenter = this.#filmRatedPresenter.get(update.id);
+      const currentFilmRatedComponent = currentFilmRatedPresenter._filmCardComponent;
+      const currentPopupRatedComponent = currentFilmRatedPresenter._popupComponent;
       this.#switchUserAction(actionType, updateType, update, commentId, newCommnet, currentPopupRatedComponent, currentFilmRatedComponent, this.#filmRatedPresenter, typePresenter);
       return;
     }
 
     if (typePresenter === Films.COMMENTED_LIST) {
-      const currentFilmCommentedComponent = this.#filmCommentedPresenter.get(update.id)._filmCardComponent;
-      const currentPopupCommentedComponent = this.#filmCommentedPresenter.get(update.id)._popupComponent;
+      const currentFilmCommentedPresenter = this.#filmCommentedPresenter.get(update.id);
+      const currentFilmCommentedComponent = currentFilmCommentedPresenter._filmCardComponent;
+      const currentPopupCommentedComponent = currentFilmCommentedPresenter._popupComponent;
       this.#switchUserAction(actionType, updateType, update, commentId, newCommnet, currentPopupCommentedComponent, currentFilmCommentedComponent, this.#filmCommentedPresenter, typePresenter);
       return;
     }
 
-    const currentFilmComponent = this.#filmPresenter.get(update.id)._filmCardComponent;
-    const currentPopupComponent = this.#filmPresenter.get(update.id)._popupComponent;
+    const currentFilmPresenter = this.#filmPresenter.get(update.id);
+    const currentFilmComponent = currentFilmPresenter._filmCardComponent;
+    const currentPopupComponent = currentFilmPresenter._popupComponent;
     this.#switchUserAction(actionType, updateType, update, commentId, newCommnet, currentPopupComponent, currentFilmComponent, this.#filmPresenter, typePresenter);
   };
 
