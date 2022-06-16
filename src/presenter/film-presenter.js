@@ -7,6 +7,7 @@ import {errorLoadWrapper} from '../utils/film.js';
 export default class FilmPresenter {
   _filmCardComponent = null;
   _popupComponent = null;
+  _typePresenter = null;
   #filmsContainer = null;
 
   #changeData = null;
@@ -20,11 +21,12 @@ export default class FilmPresenter {
   _bodyContentElement = document.body;
   #footerContentElement  = document.querySelector('.footer');
 
-  constructor(filmsContainer, changeData, changeMode, loadComments) {
+  constructor(filmsContainer, changeData, changeMode, loadComments, typePresenter) {
     this.#filmsContainer = filmsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
     this.#loadComments = loadComments;
+    this._typePresenter = typePresenter;
   }
 
   init = (card, typeList) => {
@@ -113,7 +115,7 @@ export default class FilmPresenter {
     this.#mode = Mode.POPUP;
   };
 
-  #onWatchlistClick = (evt) => {
+  #onWatchlistClick = () => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
@@ -121,11 +123,11 @@ export default class FilmPresenter {
         'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}},
       null,
       null,
-      evt
+      this._typePresenter
     );
   };
 
-  #onWatchedClick = (evt) => {
+  #onWatchedClick = () => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
@@ -133,11 +135,11 @@ export default class FilmPresenter {
         'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}},
       null,
       null,
-      evt
+      this._typePresenter
     );
   };
 
-  #onFavoriteClick = (evt) => {
+  #onFavoriteClick = () => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
@@ -145,11 +147,11 @@ export default class FilmPresenter {
         'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}},
       null,
       null,
-      evt
+      this._typePresenter
     );
   };
 
-  #onPopupWatchlistClick = (evt) => {
+  #onPopupWatchlistClick = () => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
@@ -157,11 +159,11 @@ export default class FilmPresenter {
         'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}},
       null,
       null,
-      evt
+      this._typePresenter
     );
   };
 
-  #onPopupWatchedClick = (evt) => {
+  #onPopupWatchedClick = () => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
@@ -169,11 +171,11 @@ export default class FilmPresenter {
         'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}},
       null,
       null,
-      evt
+      this._typePresenter
     );
   };
 
-  #onPopupFavoriteClick = (evt) => {
+  #onPopupFavoriteClick = () => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
@@ -181,7 +183,7 @@ export default class FilmPresenter {
         'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}},
       null,
       null,
-      evt
+      this._typePresenter
     );
   };
 
@@ -192,7 +194,7 @@ export default class FilmPresenter {
       {...this.#film},
       evt.target.id,
       null,
-      evt
+      this._typePresenter
     );
   };
 
@@ -227,7 +229,7 @@ export default class FilmPresenter {
     }
   };
 
-  #onCommentSubmit = (evt) => {
+  #onCommentSubmit = () => {
     const emotionElement = document.querySelector('#user-emoji-hidden').value;
     const commentElement = document.querySelector('.film-details__comment-input').value;
     const createNewComment = () => ({
@@ -240,7 +242,7 @@ export default class FilmPresenter {
       {...this.#film},
       null,
       createNewComment(),
-      evt
+      this._typePresenter
     );
   };
 
@@ -255,7 +257,7 @@ export default class FilmPresenter {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === 'Enter') {
       evt.preventDefault();
       this.#curentPosition = this._popupComponent.element.scrollTop;
-      this.#onCommentSubmit(evt);
+      this.#onCommentSubmit();
     }
   };
 }
