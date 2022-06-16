@@ -28,7 +28,7 @@ export default class FilmsModel extends Observable {
     return comments;
   };
 
-  updateFilm = async (updateType, update) => {
+  updateFilm = async (updateType, update, typePresenter) => {
     const index = this.#films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
@@ -43,13 +43,13 @@ export default class FilmsModel extends Observable {
         updatedFilm,
         ...this.#films.slice(index + 1),
       ];
-      this._notify(updateType, updatedFilm, comments);
+      this._notify(updateType, updatedFilm, comments, typePresenter);
     } catch(err) {
       throw new Error('Can\'t update film');
     }
   };
 
-  deleteComment = async (updateType, update, commentId) => {
+  deleteComment = async (updateType, update, commentId, typePresenter) => {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
     const deletingComment = update.comments.find((comment) => comment === commentId);
 
@@ -66,13 +66,13 @@ export default class FilmsModel extends Observable {
         ...this.#films.slice(filmIndex + 1)
       ];
 
-      this._notify(updateType, update, comments);
+      this._notify(updateType, update, comments, typePresenter);
     } catch(err) {
       throw new Error('Can\'t delete comment');
     }
   };
 
-  addComment = async (updateType, update, newComment) => {
+  addComment = async (updateType, update, newComment, typePresenter) => {
     const filmIndex = this.films.findIndex((film) => film.id === update.id);
 
     if (!newComment.comment || !newComment.emotion) {
@@ -88,7 +88,7 @@ export default class FilmsModel extends Observable {
         ...this.#films.slice(filmIndex + 1)
       ];
 
-      this._notify(updateType, update, respondedComments.comments);
+      this._notify(updateType, update, respondedComments.comments, typePresenter);
     } catch(err) {
       throw new Error('Can\'t add comment');
     }

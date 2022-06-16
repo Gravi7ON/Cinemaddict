@@ -7,6 +7,7 @@ import {errorLoadWrapper} from '../utils/film.js';
 export default class FilmPresenter {
   _filmCardComponent = null;
   _popupComponent = null;
+  _typePresenter = null;
   #filmsContainer = null;
 
   #changeData = null;
@@ -20,11 +21,12 @@ export default class FilmPresenter {
   _bodyContentElement = document.body;
   #footerContentElement  = document.querySelector('.footer');
 
-  constructor(filmsContainer, changeData, changeMode, loadComments) {
+  constructor(filmsContainer, changeData, changeMode, loadComments, typePresenter) {
     this.#filmsContainer = filmsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
     this.#loadComments = loadComments;
+    this._typePresenter = typePresenter;
   }
 
   init = (card, typeList) => {
@@ -118,7 +120,11 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}});
+        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}},
+      null,
+      null,
+      this._typePresenter
+    );
   };
 
   #onWatchedClick = () => {
@@ -126,7 +132,11 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}});
+        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}},
+      null,
+      null,
+      this._typePresenter
+    );
   };
 
   #onFavoriteClick = () => {
@@ -134,7 +144,11 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
+        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}},
+      null,
+      null,
+      this._typePresenter
+    );
   };
 
   #onPopupWatchlistClick = () => {
@@ -142,7 +156,11 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}});
+        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}},
+      null,
+      null,
+      this._typePresenter
+    );
   };
 
   #onPopupWatchedClick = () => {
@@ -150,7 +168,11 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}});
+        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}},
+      null,
+      null,
+      this._typePresenter
+    );
   };
 
   #onPopupFavoriteClick = () => {
@@ -158,7 +180,11 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}});
+        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}},
+      null,
+      null,
+      this._typePresenter
+    );
   };
 
   #onDeleteCommentButtonClick = (evt) => {
@@ -166,7 +192,10 @@ export default class FilmPresenter {
       UserAction.DELETE_COMMENT,
       UpdateType.MAJOR,
       {...this.#film},
-      evt.target.id);
+      evt.target.id,
+      null,
+      this._typePresenter
+    );
   };
 
   #deleteNotification = () => {
@@ -212,7 +241,9 @@ export default class FilmPresenter {
       UpdateType.MAJOR,
       {...this.#film},
       null,
-      createNewComment());
+      createNewComment(),
+      this._typePresenter
+    );
   };
 
   #onEscKeyDown = (evt) => {
