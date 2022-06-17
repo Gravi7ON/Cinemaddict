@@ -401,6 +401,14 @@ export default class FilmsPresenter {
           return;
         }
 
+        if (this.#filterType !== FilterType.ALL) {
+          const currentFilmPresenter = this.#filmPresenter.get(update.id);
+          currentFilmPresenter.removePopupKeysHandlers();
+          currentFilmPresenter.bodyContentElement.classList.remove('hide-overflow');
+          this.#clearAndRenderChange();
+          return;
+        }
+
         this.#currentPopupPosition = this.#filmPresenter.get(update.id).getCurrentPopupPosition();
         this.#filmPresenter.get(update.id).removePopupKeysHandlers();
         this.#clearAndRenderChange();
