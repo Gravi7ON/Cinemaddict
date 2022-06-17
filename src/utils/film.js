@@ -13,15 +13,15 @@ const getShortDescription = (description) => {
 };
 
 const sortFilmsDate = (filmA, filmB) => {
-  const dateA = formatDate(filmA.film_info.release.date).format('YYYY');
-  const dateB = formatDate(filmB.film_info.release.date).format('YYYY');
+  const dateA = formatDate(filmA.filmInfo.release.date).format('YYYY');
+  const dateB = formatDate(filmB.filmInfo.release.date).format('YYYY');
 
   return dateB - dateA;
 };
 
 const sortFilmsRating = (filmA, filmB) => {
-  const ratingA = filmA.film_info.total_rating;
-  const ratingB = filmB.film_info.total_rating;
+  const ratingA = filmA.filmInfo.totalRating;
+  const ratingB = filmB.filmInfo.totalRating;
 
   return ratingB - ratingA;
 };

@@ -1,13 +1,10 @@
 import {RenderPosition, render, remove} from '../framework/render.js';
-import {Films, Mode, UpdateType, UserAction} from '../const.js';
+import {Film, Mode, UpdateType, UserAction} from '../const.js';
 import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
 import {errorLoadWrapper} from '../utils/film.js';
 
 export default class FilmPresenter {
-  _filmCardComponent = null;
-  _popupComponent = null;
-  _typePresenter = null;
   #filmsContainer = null;
 
   #changeData = null;
@@ -18,36 +15,40 @@ export default class FilmPresenter {
   #curentPosition = null;
   #mode = Mode.DEFAULT;
 
-  _bodyContentElement = document.body;
-  #footerContentElement  = document.querySelector('.footer');
+  filmCardComponent = null;
+  popupComponent = null;
+  typePresenter = null;
+
+  bodyContentElement = document.body;
+  #footerContentElement = document.querySelector('.footer');
 
   constructor(filmsContainer, changeData, changeMode, loadComments, typePresenter) {
     this.#filmsContainer = filmsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
     this.#loadComments = loadComments;
-    this._typePresenter = typePresenter;
+    this.typePresenter = typePresenter;
   }
 
   init = (card, typeList) => {
     this.#film = card;
 
-    this._filmCardComponent = new MovieCardView(card);
+    this.filmCardComponent = new MovieCardView(card);
 
-    this._filmCardComponent.setElementClick(this.#renderPopupOnCardClick);
-    this._filmCardComponent.setWatchlistElementClick(this.#onWatchlistClick);
-    this._filmCardComponent.setWatchedElementClick(this.#onWatchedClick);
-    this._filmCardComponent.setFavoriteElementClick(this.#onFavoriteClick);
+    this.filmCardComponent.setElementClick(this.#renderPopupOnCardClick);
+    this.filmCardComponent.setWatchlistElementClick(this.#onWatchlistClick);
+    this.filmCardComponent.setWatchedElementClick(this.#onWatchedClick);
+    this.filmCardComponent.setFavoriteElementClick(this.#onFavoriteClick);
 
     switch (typeList) {
-      case Films.RATED_LIST:
-        render(this._filmCardComponent, this.#filmsContainer.element);
+      case Film.RATED_LIST:
+        render(this.filmCardComponent, this.#filmsContainer.element);
         break;
-      case Films.COMMENTED_LIST:
-        render(this._filmCardComponent, this.#filmsContainer.element);
+      case Film.COMMENTED_LIST:
+        render(this.filmCardComponent, this.#filmsContainer.element);
         break;
       default:
-        render(this._filmCardComponent, this.#filmsContainer.element);
+        render(this.filmCardComponent, this.#filmsContainer.element);
         break;
     }
   };
@@ -57,13 +58,13 @@ export default class FilmPresenter {
   };
 
   destroy = () => {
-    remove(this._filmCardComponent);
-    remove(this._popupComponent);
+    remove(this.filmCardComponent);
+    remove(this.popupComponent);
   };
 
   getCurrentPopupPosition = () => {
     if (!this.#curentPosition) {
-      this.#curentPosition = this._popupComponent._currentTopPosition;
+      this.#curentPosition = this.popupComponent.currentTopPosition;
     }
 
     return this.#curentPosition;
@@ -76,34 +77,34 @@ export default class FilmPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#closePopupOnButtonClick();
-      this._bodyContentElement.classList.add('hide-overflow');
+      this.#onClosePopupButtonClick();
+      this.bodyContentElement.classList.add('hide-overflow');
     }
   };
 
   #renderPopupOnCardClick = async (comments, currentPopupPosition) => {
-    if (this._popupComponent !== null) {
-      this._popupComponent.removeElement();
+    if (this.popupComponent !== null) {
+      this.popupComponent.removeElement();
       this.#deleteNotification();
     }
 
     if (comments) {
-      this._popupComponent = new PopupView(this.#film, comments);
+      this.popupComponent = new PopupView(this.#film, comments);
     } else {
       const firstLoad = await this.#loadComments(this.#film.id);
-      this._popupComponent = new PopupView(this.#film, firstLoad);
+      this.popupComponent = new PopupView(this.#film, firstLoad);
     }
 
-    this._popupComponent.setButtonCloseElementClick(this.#closePopupOnButtonClick);
-    this._popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
-    this._popupComponent.setWatchedElementClick(this.#onPopupWatchedClick);
-    this._popupComponent.setFavoriteElementClick(this.#onPopupFavoriteClick);
-    this._popupComponent.setButtonDeleteCommentClick(this.#onDeleteCommentButtonClick);
-    this._popupComponent.setEmotionElementChange(this.#onEmotionChange);
+    this.popupComponent.setButtonCloseElementClick(this.#onClosePopupButtonClick);
+    this.popupComponent.setWatchlistElementClick(this.#onPopupWatchlistClick);
+    this.popupComponent.setWatchedElementClick(this.#onPopupWatchedClick);
+    this.popupComponent.setFavoriteElementClick(this.#onPopupFavoriteClick);
+    this.popupComponent.setButtonDeleteCommentClick(this.#onDeleteCommentButtonClick);
+    this.popupComponent.setEmotionElementChange(this.#onEmotionChange);
 
-    render(this._popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
-    this._bodyContentElement.classList.add('hide-overflow');
-    this._popupComponent._scrollTo(currentPopupPosition);
+    render(this.popupComponent, this.#footerContentElement, RenderPosition.AFTEREND);
+    this.bodyContentElement.classList.add('hide-overflow');
+    this.popupComponent.scrollTo(currentPopupPosition);
     document.addEventListener('keydown', this.#onEscKeyDown);
     document.addEventListener('keydown', this.#onCommandControlEnterKeySubmit);
 
@@ -115,15 +116,23 @@ export default class FilmPresenter {
     this.#mode = Mode.POPUP;
   };
 
+  #deleteNotification = () => {
+    const notification = this.bodyContentElement.querySelector('.film-details_error-notification');
+    if (notification) {
+      notification.remove();
+      errorLoadWrapper.deleteTimeout();
+    }
+  };
+
   #onWatchlistClick = () => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}},
+        'userDetails': {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}},
       null,
       null,
-      this._typePresenter
+      this.typePresenter
     );
   };
 
@@ -132,10 +141,10 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}},
+        'userDetails': {...this.#film.userDetails, 'alreadyWatched': !this.#film.userDetails.alreadyWatched}},
       null,
       null,
-      this._typePresenter
+      this.typePresenter
     );
   };
 
@@ -144,10 +153,10 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}},
+        'userDetails': {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}},
       null,
       null,
-      this._typePresenter
+      this.typePresenter
     );
   };
 
@@ -156,10 +165,10 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}},
+        'userDetails': {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}},
       null,
       null,
-      this._typePresenter
+      this.typePresenter
     );
   };
 
@@ -168,10 +177,10 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}},
+        'userDetails': {...this.#film.userDetails, 'alreadyWatched': !this.#film.userDetails.alreadyWatched}},
       null,
       null,
-      this._typePresenter
+      this.typePresenter
     );
   };
 
@@ -180,10 +189,10 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}},
+        'userDetails': {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}},
       null,
       null,
-      this._typePresenter
+      this.typePresenter
     );
   };
 
@@ -194,22 +203,14 @@ export default class FilmPresenter {
       {...this.#film},
       evt.target.id,
       null,
-      this._typePresenter
+      this.typePresenter
     );
   };
 
-  #deleteNotification = () => {
-    const notification = this._bodyContentElement.querySelector('.film-details_error-notification');
-    if (notification) {
-      notification.remove();
-      errorLoadWrapper.deleteTimeout();
-    }
-  };
+  #onClosePopupButtonClick = () => {
+    this.popupComponent.removeElement();
 
-  #closePopupOnButtonClick = () => {
-    this._popupComponent.removeElement();
-
-    this._bodyContentElement.classList.remove('hide-overflow');
+    this.bodyContentElement.classList.remove('hide-overflow');
     this.#deleteNotification();
     document.removeEventListener('keydown', this.#onEscKeyDown);
     document.removeEventListener('keydown', this.#onCommandControlEnterKeySubmit);
@@ -233,8 +234,8 @@ export default class FilmPresenter {
     const emotionElement = document.querySelector('#user-emoji-hidden').value;
     const commentElement = document.querySelector('.film-details__comment-input').value;
     const createNewComment = () => ({
-      'comment': commentElement,
-      'emotion': emotionElement
+      comment: commentElement,
+      emotion: emotionElement
     });
     this.#changeData(
       UserAction.ADD_COMMENT,
@@ -242,21 +243,21 @@ export default class FilmPresenter {
       {...this.#film},
       null,
       createNewComment(),
-      this._typePresenter
+      this.typePresenter
     );
   };
 
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#closePopupOnButtonClick();
+      this.#onClosePopupButtonClick();
     }
   };
 
   #onCommandControlEnterKeySubmit = (evt) => {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === 'Enter') {
       evt.preventDefault();
-      this.#curentPosition = this._popupComponent.element.scrollTop;
+      this.#curentPosition = this.popupComponent.element.scrollTop;
       this.#onCommentSubmit();
     }
   };

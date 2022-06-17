@@ -11,8 +11,8 @@ const createFilterMenuTemplate = (films, currentFilterType) => (
     <a href="#history" class="main-navigation__item ${currentFilterType === FilterType.WATCHED ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.WATCHED}">History
     <span class="main-navigation__item-count" data-filter-type="${FilterType.WATCHED}">${filter[FilterType.WATCHED](films).length}</span>
     </a>
-    <a href="#favorites" class="main-navigation__item ${currentFilterType === FilterType.FAVORITES ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.FAVORITES}">Favorites
-    <span class="main-navigation__item-count" data-filter-type="${FilterType.FAVORITES}">${filter[FilterType.FAVORITES](films).length}</span>
+    <a href="#favorites" class="main-navigation__item ${currentFilterType === FilterType.FAVORITES ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.FAVORITE}">Favorites
+    <span class="main-navigation__item-count" data-filter-type="${FilterType.FAVORITE}">${filter[FilterType.FAVORITE](films).length}</span>
     </a>
   </nav>`
 );
@@ -33,10 +33,10 @@ export default class FilterMenuView extends AbstractView {
 
   setFilterTypeElementClick = (callback) => {
     this._callback.filterTypeClick = callback;
-    this.element.addEventListener('click', this.#filterTypeOnClick);
+    this.element.addEventListener('click', this.#onFilterTypeClick);
   };
 
-  #filterTypeOnClick = (evt) => {
+  #onFilterTypeClick = (evt) => {
     if (evt.target.tagName !== 'A' && evt.target.tagName !== 'SPAN') {
       return;
     }
