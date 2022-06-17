@@ -22,18 +22,17 @@ export default class FilmPresenter {
   bodyContentElement = document.body;
   #footerContentElement = document.querySelector('.footer');
 
-  constructor(filmsContainer, changeData, changeMode, loadComments, typePresenter) {
+  constructor(filmsContainer, changeData, changeMode, film, loadComments, typePresenter) {
     this.#filmsContainer = filmsContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#film = film;
     this.#loadComments = loadComments;
     this.typePresenter = typePresenter;
   }
 
-  init = (card, typeList) => {
-    this.#film = card;
-
-    this.filmCardComponent = new MovieCardView(card);
+  init = (typeList) => {
+    this.filmCardComponent = new MovieCardView(this.#film);
 
     this.filmCardComponent.setElementClick(this.#renderPopupOnCardClick);
     this.filmCardComponent.setWatchlistElementClick(this.#onWatchlistClick);

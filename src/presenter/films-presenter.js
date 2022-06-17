@@ -117,28 +117,28 @@ export default class FilmsPresenter {
     render(this.#showMoreButtonComponent, this.#filmsList.element);
   };
 
-  #renderNoFilms = (filmsCards) => {
+  #renderNoFilms = (films) => {
     render(this.#filmsBoard, this.#boardContainer);
     this.#filmsListEmptyComponent = new FilmsListEmptyView(this.#filterType);
     render(this.#filmsListEmptyComponent, this.#filmsBoard.element);
-    this.#renderFilmAmount(filmsCards);
+    this.#renderFilmAmount(films);
   };
 
-  #renderFilm = (card, typeList, typeContainer) => {
-    const filmPresenter = new FilmPresenter(typeContainer, this.#onViewAction, this.#onModeChange, this.#filmsModel.getComments, typeList);
-    filmPresenter.init(card, typeList);
+  #renderFilm = (film, typeList, typeContainer) => {
+    const filmPresenter = new FilmPresenter(typeContainer, this.#onViewAction, this.#onModeChange, film, this.#filmsModel.getComments, typeList);
+    filmPresenter.init(film, typeList);
 
     if (typeList === Film.RATED_LIST) {
-      this.#filmRatedPresenter.set(card.id, filmPresenter);
+      this.#filmRatedPresenter.set(film.id, filmPresenter);
       return;
     }
 
     if (typeList === Film.COMMENTED_LIST) {
-      this.#filmCommentedPresenter.set(card.id, filmPresenter);
+      this.#filmCommentedPresenter.set(film.id, filmPresenter);
       return;
     }
 
-    this.#filmPresenter.set(card.id, filmPresenter);
+    this.#filmPresenter.set(film.id, filmPresenter);
   };
 
   #renderFilms = (films) => {
@@ -183,7 +183,7 @@ export default class FilmsPresenter {
     const films = [...this.#filmsModel.films];
     const ratedFilms = films.sort(sortFilmsRating).slice(0, FILMS_COUNT_ADDITIONAL_BLOCK);
     const isAllFilmsHaveRatingZero = (movies) => movies.every((movie) => movie.totalRating === 0);
-    const isAllFilmsHaveRatingSame = (movies) => movies.every((movie) => movie.totalRating === movies[0]);
+    const isAllFilmsHaveRatingSame = (movies) => movies.every((movie) => movie.totalating === movies[0]);
 
     if (isAllFilmsHaveRatingZero(films)) {
       return;
@@ -309,10 +309,10 @@ export default class FilmsPresenter {
         break;
       case UserAction.DELETE_COMMENT:
         try {
-          currentPopupComponent.checkErrorDeleteComment(update, commentId, true);
+          currentPopupComponent.checkErrorDeleteComment(commentId, true);
           await this.#filmsModel.deleteComment(updateType, update, commentId, typePresenter);
         } catch {
-          currentPopupComponent.checkErrorDeleteComment(update, commentId, false, true);
+          currentPopupComponent.checkErrorDeleteComment(commentId, false, true);
         }
         break;
       case UserAction.ADD_COMMENT:
