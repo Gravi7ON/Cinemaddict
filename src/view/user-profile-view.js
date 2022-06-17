@@ -18,7 +18,7 @@ const getRank = (watchedFilms) => {
 
 
 const createUserProfileTemplate = (films) => {
-  const userRank = getRank(films.filter((item) => item.user_details.already_watched).length);
+  const userRank = getRank(films.filter((item) => item.userDetails.alreadyWatched).length);
 
   return `<section class="header__profile profile">
     <p class="profile__rating">${userRank}</p>

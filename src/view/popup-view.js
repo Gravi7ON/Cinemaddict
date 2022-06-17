@@ -26,10 +26,10 @@ const createCommentsTemplate = (comments) => {
 };
 
 const createPopupTemplate = (popup, comments) => {
-  const {film_info, user_details} = popup;
-  const durationHours = Math.floor(film_info.runtime / 60);
-  const durationMunutes = film_info.runtime - 60 * durationHours;
-  const releaseDate = formatDate(film_info.release.date).format('D MMM YYYY');
+  const {filmInfo, userDetails} = popup;
+  const durationHours = Math.floor(filmInfo.runtime / 60);
+  const durationMunutes = filmInfo.runtime - 60 * durationHours;
+  const releaseDate = formatDate(filmInfo.release.date).format('D MMM YYYY');
 
   return (
     `<section class="film-details">
@@ -40,35 +40,35 @@ const createPopupTemplate = (popup, comments) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./${film_info.poster}" alt="${film_info.alternative_title}">
+              <img class="film-details__poster-img" src="./${filmInfo.poster}" alt="${filmInfo.alternativeTitle}">
 
-              <p class="film-details__age">${film_info.age_rating}+</p>
+              <p class="film-details__age">${filmInfo.ageRating}+</p>
             </div>
 
             <div class="film-details__info">
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
-                  <h3 class="film-details__title">${film_info.title}</h3>
-                  <p class="film-details__title-original">Original: ${film_info.title}</p>
+                  <h3 class="film-details__title">${filmInfo.title}</h3>
+                  <p class="film-details__title-original">Original: ${filmInfo.title}</p>
                 </div>
 
                 <div class="film-details__rating">
-                  <p class="film-details__total-rating">${film_info.total_rating}</p>
+                  <p class="film-details__total-rating">${filmInfo.totalRating}</p>
                 </div>
               </div>
 
               <table class="film-details__table">
                 <tr class="film-details__row">
                   <td class="film-details__term">Director</td>
-                  <td class="film-details__cell">${film_info.director}</td>
+                  <td class="film-details__cell">${filmInfo.director}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">${film_info.actors.length > 1 ? 'Writers' : 'Writer'}</td>
-                  <td class="film-details__cell">${film_info.writers.join(', ')}</td>
+                  <td class="film-details__term">${filmInfo.actors.length > 1 ? 'Writers' : 'Writer'}</td>
+                  <td class="film-details__cell">${filmInfo.writers.join(', ')}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">${film_info.actors.length > 1 ? 'Actors' : 'Actor'}</td>
-                  <td class="film-details__cell">${film_info.actors.join(', ')}</td>
+                  <td class="film-details__term">${filmInfo.actors.length > 1 ? 'Actors' : 'Actor'}</td>
+                  <td class="film-details__cell">${filmInfo.actors.join(', ')}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
@@ -80,26 +80,26 @@ const createPopupTemplate = (popup, comments) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
-                  <td class="film-details__cell">${film_info.release.release_country}</td>
+                  <td class="film-details__cell">${filmInfo.release.releaseCountry}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">${film_info.genre.length > 1 ? 'Genres' : 'Genre'}</td>
+                  <td class="film-details__term">${filmInfo.genre.length > 1 ? 'Genres' : 'Genre'}</td>
                   <td class="film-details__cell">
-                    ${createGenreTemplate(film_info.genre)}
+                    ${createGenreTemplate(filmInfo.genre)}
                   </td>
                 </tr>
               </table>
 
               <p class="film-details__film-description">
-                ${getShortDescription(film_info.description)}
+                ${getShortDescription(filmInfo.description)}
               </p>
             </div>
           </div>
 
           <section class="film-details__controls">
-            <button type="button" class="film-details__control-button film-details__control-button--watchlist ${user_details.watchlist ? classStyleButtonsPopup : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button" class="film-details__control-button film-details__control-button--watched ${user_details.already_watched ? classStyleButtonsPopup : ''}" id="watched" name="watched">Already watched</button>
-            <button type="button" class="film-details__control-button film-details__control-button--favorite ${user_details.favorite ? classStyleButtonsPopup : ''}" id="favorite" name="favorite">Add to favorites</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watchlist ${userDetails.watchlist ? classStyleButtonsPopup : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watched ${userDetails.alreadyWatched ? classStyleButtonsPopup : ''}" id="watched" name="watched">Already watched</button>
+            <button type="button" class="film-details__control-button film-details__control-button--favorite ${userDetails.favorite ? classStyleButtonsPopup : ''}" id="favorite" name="favorite">Add to favorites</button>
           </section>
         </div>
 
@@ -254,10 +254,10 @@ export default class PopupView extends AbstractStatefulView {
     this.shake(this.buttonsControl);
   };
 
-  checkErrorDeleteComment = (update, commentId, isDeleteng, isError) => {
+  checkErrorDeleteComment = (update, commentId, isDeleting, isError) => {
     const deletingCommentButton = this.getbuttonDeleteComment(commentId);
-    deletingCommentButton.textContent = isDeleteng ? 'Deleting' : 'Delete';
-    deletingCommentButton.disabled = isDeleteng ? isDeleteng : false;
+    deletingCommentButton.textContent = isDeleting ? 'Deleting' : 'Delete';
+    deletingCommentButton.disabled = isDeleting ? isDeleting : false;
 
     if (!isError) {
       return;

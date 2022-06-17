@@ -182,8 +182,8 @@ export default class FilmsPresenter {
   #renderFilmsRatedList = () => {
     const films = [...this.#filmsModel.films];
     const ratedFilms = films.sort(sortFilmsRating).slice(0, FILMS_COUNT_ADDITIONAL_BLOCK);
-    const isAllFilmsHaveRatingZero = (movies) => movies.every((movie) => movie.total_rating === 0);
-    const isAllFilmsHaveRatingSame = (movies) => movies.every((movie) => movie.total_rating === movies[0]);
+    const isAllFilmsHaveRatingZero = (movies) => movies.every((movie) => movie.totalRating === 0);
+    const isAllFilmsHaveRatingSame = (movies) => movies.every((movie) => movie.totalRating === movies[0]);
 
     if (isAllFilmsHaveRatingZero(films)) {
       return;

@@ -16,7 +16,8 @@ export default class FilmsModel extends Observable {
 
   init = async () => {
     try {
-      this.#films = await this.#filmsApiService.films;
+      const films = await this.#filmsApiService.films;
+      this.#films = films.map(this.#adaptToClient);
     } catch(err) {
       this.#films = [];
     }
@@ -36,7 +37,8 @@ export default class FilmsModel extends Observable {
     }
 
     try {
-      const updatedFilm = await this.#filmsApiService.updateFilm(update);
+      const response = await this.#filmsApiService.updateFilm(update);
+      const updatedFilm = this.#adaptToClient(response);
       const comments = await this.#filmsApiService.getComments(update.id);
       this.#films = [
         ...this.#films.slice(0, index),
@@ -80,17 +82,46 @@ export default class FilmsModel extends Observable {
     }
 
     try {
-      const respondedComments = await this.#filmsApiService.addComment(update, newComment);
+      const updatedComments = await this.#filmsApiService.addComment(update, newComment);
 
       this.#films = [
         ...this.#films.slice(0, filmIndex),
-        respondedComments.movie,
+        this.#adaptToClient(updatedComments.movie),
         ...this.#films.slice(filmIndex + 1)
       ];
 
-      this._notify(updateType, update, respondedComments.comments, typePresenter);
+      this._notify(updateType, update, updatedComments.comments, typePresenter);
     } catch(err) {
       throw new Error('Can\'t add comment');
     }
+  };
+
+  #adaptToClient = (film) => {
+    const adaptedFilm = {...film,
+      filmInfo: {
+        ...film['film_info'],
+        alternativeTitle: film['film_info'].alternative_title,
+        totalRating: film['film_info'].total_rating,
+        ageRating: film['film_info'].age_rating,
+        release: {
+          ...film['film_info'].release,
+          releaseCountry: film['film_info'].release.release_country
+        }
+      },
+      userDetails: {
+        ...film['user_details'],
+        alreadyWatched: film['user_details'].already_watched,
+        watchingDate: film['user_details'].watching_date
+      }
+    };
+
+    delete adaptedFilm['film_info']['alternative_title'];
+    delete adaptedFilm['film_info']['total_rating'];
+    delete adaptedFilm['film_info']['age_rating'];
+    delete adaptedFilm['film_info'].release['release_country'];
+    delete adaptedFilm['user_details']['already_watched'];
+    delete adaptedFilm['user_details']['watching_date'];
+
+    return adaptedFilm;
   };
 }

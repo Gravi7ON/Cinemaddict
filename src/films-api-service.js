@@ -33,7 +33,7 @@ export default class FilmsApiService extends ApiService {
     const response = await this._load({
       url: `movies/${film.id}`,
       method: Method.PUT,
-      body: JSON.stringify(film),
+      body: JSON.stringify(this.#adaptToServer(film)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -62,5 +62,34 @@ export default class FilmsApiService extends ApiService {
     });
 
     return response;
+  };
+
+  #adaptToServer = (film) => {
+    const adaptedFilm = {...film,
+      'film_info': {
+        ...film.filmInfo,
+        'alternative_title': film.filmInfo.alternativeTitle,
+        'total_rating': film.filmInfo.totalRating,
+        'age_rating': film.filmInfo.ageRating,
+        release: {
+          ...film.filmInfo.release,
+          'release_country': film.filmInfo.release.releaseCountry
+        }
+      },
+      'user_details': {
+        ...film.userDetails,
+        'already_watched': film.userDetails.alreadyWatched,
+        'watching_date': film.userDetails.watchingDate
+      }
+    };
+
+    delete adaptedFilm.filmInfo.alternativeTitle;
+    delete adaptedFilm.filmInfo.totalRating;
+    delete adaptedFilm.filmInfo.ageRating;
+    delete adaptedFilm.filmInfo.release.releaseCountry;
+    delete adaptedFilm.userDetails.alreadyWatched;
+    delete adaptedFilm.userDetails.watchingDate;
+
+    return adaptedFilm;
   };
 }

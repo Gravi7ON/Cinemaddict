@@ -129,7 +129,7 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}},
+        'userDetails': {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}},
       null,
       null,
       this.typePresenter
@@ -141,7 +141,7 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}},
+        'userDetails': {...this.#film.userDetails, 'alreadyWatched': !this.#film.userDetails.alreadyWatched}},
       null,
       null,
       this.typePresenter
@@ -153,7 +153,7 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}},
+        'userDetails': {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}},
       null,
       null,
       this.typePresenter
@@ -165,7 +165,7 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, watchlist: !this.#film.user_details.watchlist}},
+        'userDetails': {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}},
       null,
       null,
       this.typePresenter
@@ -177,7 +177,7 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, 'already_watched': !this.#film.user_details.already_watched}},
+        'userDetails': {...this.#film.userDetails, 'alreadyWatched': !this.#film.userDetails.alreadyWatched}},
       null,
       null,
       this.typePresenter
@@ -189,7 +189,7 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
       {...this.#film,
-        'user_details': {...this.#film.user_details, favorite: !this.#film.user_details.favorite}},
+        'userDetails': {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}},
       null,
       null,
       this.typePresenter
@@ -234,8 +234,8 @@ export default class FilmPresenter {
     const emotionElement = document.querySelector('#user-emoji-hidden').value;
     const commentElement = document.querySelector('.film-details__comment-input').value;
     const createNewComment = () => ({
-      'comment': commentElement,
-      'emotion': emotionElement
+      comment: commentElement,
+      emotion: emotionElement
     });
     this.#changeData(
       UserAction.ADD_COMMENT,
