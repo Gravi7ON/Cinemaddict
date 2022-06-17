@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {formatDate, getShortDescription} from '../utils/film.js';
+import {durationInMinutes} from '../const.js';
 import he from 'he';
 
 const classStyleButtonsPopup = 'film-details__control-button--active';
@@ -27,8 +28,8 @@ const createCommentsTemplate = (comments) => {
 
 const createPopupTemplate = (popup, comments) => {
   const {filmInfo, userDetails} = popup;
-  const durationHours = Math.floor(filmInfo.runtime / 60);
-  const durationMunutes = filmInfo.runtime - 60 * durationHours;
+  const durationHours = Math.floor(filmInfo.runtime / durationInMinutes);
+  const durationMunutes = filmInfo.runtime - durationInMinutes * durationHours;
   const releaseDate = formatDate(filmInfo.release.date).format('D MMM YYYY');
 
   return (
@@ -105,7 +106,7 @@ const createPopupTemplate = (popup, comments) => {
 
         <div class="film-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">${comments.length > 1 ? 'Comments' : 'Comment'} <span class="film-details__comments-count">${comments.length}</span></h3>
+            <h3 class="film-details__comments-title">Comment <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
               ${createCommentsTemplate(comments)}
@@ -254,10 +255,10 @@ export default class PopupView extends AbstractStatefulView {
     this.shake(this.buttonsControl);
   };
 
-  checkErrorDeleteComment = (update, commentId, isDeleting, isError) => {
+  checkErrorDeleteComment = (commentId, isDeleting, isError) => {
     const deletingCommentButton = this.getbuttonDeleteComment(commentId);
     deletingCommentButton.textContent = isDeleting ? 'Deleting' : 'Delete';
-    deletingCommentButton.disabled = isDeleting ? isDeleting : false;
+    deletingCommentButton.disabled = isDeleting || false;
 
     if (!isError) {
       return;
@@ -267,11 +268,9 @@ export default class PopupView extends AbstractStatefulView {
   };
 
   checkErrorAddComment = (isAdding, isError, err, uiBlocker) => {
-    const textArea = this.textArea;
-    const emojis = this.emojiButton;
-    textArea.disabled = isAdding ? isAdding : false;
-    emojis.forEach((element) => {
-      element.disabled = isAdding ? isAdding : false;
+    this.textArea.disabled = isAdding || false;
+    this.emojiButton.forEach((element) => {
+      element.disabled = isAdding || false;
     });
 
     if (!isError) {

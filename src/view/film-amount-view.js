@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilmAmountTemplate = (films) => `<p>${films.length} ${films.length > 1 ? 'movies' : 'movie'} inside</p>`;
+const createFilmAmountTemplate = (films) => `<p>${films.length} movies inside</p>`;
 
 export default class FilmAmountView extends AbstractView {
   #films = null;
