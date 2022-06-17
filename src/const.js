@@ -5,8 +5,6 @@ const Film = {
 
 const FILMS_COUNT_PER_STEP = 5;
 const FILMS_COUNT_ADDITIONAL_BLOCK = 2;
-const UPDATE_COUNT = 1;
-const DELETE_COUNT = 1;
 const durationInMinutes = 60;
 
 const Mode = {
@@ -46,4 +44,4 @@ const TimeLimit = {
   UPPER_LIMIT: 450,
 };
 
-export {Film, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, UPDATE_COUNT, DELETE_COUNT, TimeLimit, FILMS_COUNT_ADDITIONAL_BLOCK, durationInMinutes};
+export {Film, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, TimeLimit, FILMS_COUNT_ADDITIONAL_BLOCK, durationInMinutes};

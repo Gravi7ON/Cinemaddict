@@ -190,16 +190,16 @@ export default class FilmsPresenter {
     }
 
     if (isAllFilmsHaveRatingSame(films)) {
-      const randomRated = [];
+      const randomRatedFilms = [];
 
       for (let i = 0; i < FILMS_COUNT_ADDITIONAL_BLOCK; i++) {
-        randomRated.push(films[getRandomUniquePositiveInteger(0, films.length - 1)()]);
+        randomRatedFilms.push(films[getRandomUniquePositiveInteger(0, films.length - 1)()]);
       }
 
       render(this.#filmsTopRatedList, this.#filmsBoard.element);
       render(this.#filmsTopRatedContainer, this.#filmsTopRatedList.element);
 
-      for (const filmCard of randomRated) {
+      for (const filmCard of randomRatedFilms) {
         this.#renderFilm(filmCard, Film.RATED_LIST, this.#filmsTopRatedContainer);
       }
       return;
@@ -398,6 +398,14 @@ export default class FilmsPresenter {
           currentFilmCommentedPresenter.bodyContentElement.classList.remove('hide-overflow');
           this.#clearAndRenderChange();
           this.#filmCommentedPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
+          return;
+        }
+
+        if (this.#filterType !== FilterType.ALL) {
+          const currentFilmPresenter = this.#filmPresenter.get(update.id);
+          currentFilmPresenter.removePopupKeysHandlers();
+          currentFilmPresenter.bodyContentElement.classList.remove('hide-overflow');
+          this.#clearAndRenderChange();
           return;
         }
 
