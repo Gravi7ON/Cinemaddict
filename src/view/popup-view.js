@@ -159,7 +159,7 @@ export default class PopupView extends AbstractStatefulView {
   #textArea = null;
   #emojiButton = null;
   #commentForm = null;
-  _currentTopPosition = null;
+  currentTopPosition = null;
 
   constructor(popup, comments = []) {
     super();
@@ -245,21 +245,16 @@ export default class PopupView extends AbstractStatefulView {
     this.element.querySelector('.film-details__inner').addEventListener('change', this.#onEmotionButtonClick);
   };
 
-  _restoreScrollForChange = (callback, evt) => {
-    this._currentTopPosition = this.element.scrollTop;
-    callback(evt);
-  };
-
-  _scrollTo = (currentPosition) => {
+  scrollTo = (currentPosition) => {
     this.element.scrollTo(0, currentPosition);
-    this._currentTopPosition = 0;
+    this.currentTopPosition = 0;
   };
 
-  _catchErrorUpdateFilm = () => {
+  catchErrorUpdateFilm = () => {
     this.shake(this.buttonsControl);
   };
 
-  _checkErrorDeleteComment = (update, commentId, isDeleteng, isError) => {
+  checkErrorDeleteComment = (update, commentId, isDeleteng, isError) => {
     const deletingCommentButton = this.getbuttonDeleteComment(commentId);
     deletingCommentButton.textContent = isDeleteng ? 'Deleting' : 'Delete';
     deletingCommentButton.disabled = isDeleteng ? isDeleteng : false;
@@ -271,7 +266,7 @@ export default class PopupView extends AbstractStatefulView {
     this.shake(this.deleteCommentBlock);
   };
 
-  _checkErrorAddComment = (isAdding, isError, err, uiBlocker) => {
+  checkErrorAddComment = (isAdding, isError, err, uiBlocker) => {
     const textArea = this.textArea;
     const emojis = this.emojiButton;
     textArea.disabled = isAdding ? isAdding : false;
@@ -289,6 +284,11 @@ export default class PopupView extends AbstractStatefulView {
     throw new Error(err);
   };
 
+  #restoreScrollForChange = (callback, evt) => {
+    this.currentTopPosition = this.element.scrollTop;
+    callback(evt);
+  };
+
   #onClick = (evt) => {
     evt.preventDefault();
     this._callback.closeButtonClick();
@@ -296,17 +296,17 @@ export default class PopupView extends AbstractStatefulView {
 
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
-    this._restoreScrollForChange(this._callback.watchlistClick);
+    this.#restoreScrollForChange(this._callback.watchlistClick);
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
-    this._restoreScrollForChange(this._callback.watchedClick);
+    this.#restoreScrollForChange(this._callback.watchedClick);
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
-    this._restoreScrollForChange(this._callback.favoriteClick);
+    this.#restoreScrollForChange(this._callback.favoriteClick);
   };
 
   #onEmotionButtonClick = (evt) => {
@@ -321,6 +321,6 @@ export default class PopupView extends AbstractStatefulView {
       return;
     }
 
-    this._restoreScrollForChange(this._callback.deleteButtonClick, evt);
+    this.#restoreScrollForChange(this._callback.deleteButtonClick, evt);
   };
 }

@@ -1,10 +1,10 @@
-const Films = {
-  COMMON_LIST: 'common',
-  RATED_LIST: 'rated',
-  COMMENTED_LIST: 'commented'
+const Film = {
+  RATED_LIST: 'RATED',
+  COMMENTED_LIST: 'COMMENTED'
 };
 
 const FILMS_COUNT_PER_STEP = 5;
+const FILMS_COUNT_ADDITIONAL_BLOCK = 2;
 const UPDATE_COUNT = 1;
 const DELETE_COUNT = 1;
 
@@ -14,9 +14,9 @@ const Mode = {
 };
 
 const SortType = {
-  DEFAULT: 'default',
-  DATE: 'date',
-  RATING: 'rating'
+  DEFAULT: 'DEFAULT',
+  DATE: 'DATE',
+  RATING: 'RATING'
 };
 
 const UserAction = {
@@ -34,10 +34,10 @@ const UpdateType = {
 };
 
 const FilterType = {
-  ALL: 'all',
-  WATCH_LIST: 'watch',
-  WATCHED: 'watched',
-  FAVORITES: 'favorites'
+  ALL: 'ALL',
+  WATCH_LIST: 'WATCH',
+  WATCHED: 'WATCHED',
+  FAVORITE: 'FAVORITE'
 };
 
 const TimeLimit = {
@@ -45,4 +45,4 @@ const TimeLimit = {
   UPPER_LIMIT: 450,
 };
 
-export {Films, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, UPDATE_COUNT, DELETE_COUNT, TimeLimit};
+export {Film, Mode, SortType, FILMS_COUNT_PER_STEP, UpdateType, UserAction, FilterType, UPDATE_COUNT, DELETE_COUNT, TimeLimit, FILMS_COUNT_ADDITIONAL_BLOCK};

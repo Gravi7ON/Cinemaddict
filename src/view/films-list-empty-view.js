@@ -5,7 +5,7 @@ const NoFilmsTextType = {
   [FilterType.ALL]: 'There are no movies in our database',
   [FilterType.WATCH_LIST]: 'There are no movies to watch now',
   [FilterType.WATCHED]: 'There are no watched movies now',
-  [FilterType.FAVORITES]: 'There are no favorite movies now'
+  [FilterType.FAVORITE]: 'There are no favorite movies now'
 };
 
 const createFilmsListEmptyTemplate = (filterType) => {

@@ -23,10 +23,10 @@ export default class SortMenuView extends AbstractView {
 
   setSortTypeElementClick = (callback) => {
     this._callback.sortTypeClick = callback;
-    this.element.addEventListener('click', this.#sortTypeOnMenuClick);
+    this.element.addEventListener('click', this.#onSortTypeMenuClick);
   };
 
-  #sortTypeOnMenuClick = (evt) => {
+  #onSortTypeMenuClick = (evt) => {
     if (evt.target.tagName !== 'A') {
       return;
     }
