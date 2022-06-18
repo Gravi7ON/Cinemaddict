@@ -159,7 +159,7 @@ export default class FilmPresenter {
     );
   };
 
-  #onPopupWatchlistClick = () => {
+  #onPopupWatchlistClick = (evt) => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
@@ -167,11 +167,12 @@ export default class FilmPresenter {
         'userDetails': {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}},
       null,
       null,
-      this.typePresenter
+      this.typePresenter,
+      evt.target.id
     );
   };
 
-  #onPopupWatchedClick = () => {
+  #onPopupWatchedClick = (evt) => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
@@ -179,11 +180,12 @@ export default class FilmPresenter {
         'userDetails': {...this.#film.userDetails, 'alreadyWatched': !this.#film.userDetails.alreadyWatched}},
       null,
       null,
-      this.typePresenter
+      this.typePresenter,
+      evt.target.id
     );
   };
 
-  #onPopupFavoriteClick = () => {
+  #onPopupFavoriteClick = (evt) => {
     this.#changeData(
       UserAction.UPDATE_FILM,
       UpdateType.MAJOR,
@@ -191,7 +193,8 @@ export default class FilmPresenter {
         'userDetails': {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}},
       null,
       null,
-      this.typePresenter
+      this.typePresenter,
+      evt.target.id
     );
   };
 

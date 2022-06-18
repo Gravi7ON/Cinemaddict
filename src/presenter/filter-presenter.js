@@ -6,13 +6,15 @@ export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #filmsModel = null;
+  #renderFilms = null;
 
   #filterComponent = null;
 
-  constructor(filterContainer, filterModel, filmsModel) {
+  constructor(filterContainer, filterModel, filmsModel, renderFilms) {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#filmsModel = filmsModel;
+    this.#renderFilms = renderFilms;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -39,6 +41,7 @@ export default class FilterPresenter {
   };
 
   #handleModelEvent = () => {
+    this.#renderFilms();
     this.init();
     if (this.#filmsModel.films.length === 0) {
       return;
