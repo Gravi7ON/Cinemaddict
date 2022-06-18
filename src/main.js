@@ -11,7 +11,7 @@ const mainContentElement = document.querySelector('.main');
 const filmsModel = new FilmsModel(new FilmsApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
 const filmsPresenter = new FilmsPresenter(mainContentElement, filmsModel, filterModel);
-const filterPresenter = new FilterPresenter(mainContentElement, filterModel, filmsModel, filmsPresenter.renderFilmsOfFilter);
+const filterPresenter = new FilterPresenter(mainContentElement, filterModel, filmsModel);
 
 filterPresenter.init();
 filmsPresenter.init();
