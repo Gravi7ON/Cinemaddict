@@ -29,7 +29,7 @@ export default class FilmsModel extends Observable {
     return comments;
   };
 
-  updateFilm = async (updateType, update, typePresenter) => {
+  updateFilm = async (updateType, update, typePresenter, target) => {
     const index = this.#films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
@@ -45,7 +45,7 @@ export default class FilmsModel extends Observable {
         updatedFilm,
         ...this.#films.slice(index + 1),
       ];
-      this._notify(updateType, updatedFilm, comments, typePresenter);
+      this._notify(updateType, updatedFilm, comments, typePresenter, target);
     } catch(err) {
       throw new Error('Can\'t update film');
     }

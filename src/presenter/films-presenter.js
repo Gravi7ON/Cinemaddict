@@ -93,6 +93,13 @@ export default class FilmsPresenter {
     this.#renderFilmsCommentedList();
   };
 
+  renderFilmsOfFilter = () => {
+    this.#clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
+    this.#renderCommonFilms();
+    this.#renderFilmsRatedList();
+    this.#renderFilmsCommentedList();
+  };
+
   #renderUserProfile = () => {
     this.#userProfile = new UserProfileView(this.#filmsModel.films);
     render(this.#userProfile, this.#userProfileElement);
@@ -292,13 +299,13 @@ export default class FilmsPresenter {
     this.#renderFilmsCommentedList();
   };
 
-  #switchUserAction = async (actionType, updateType, update, commentId, newCommnet, currentPopupComponent, currentFilmComponent, currentPresenter, typePresenter) => {
+  #switchUserAction = async (actionType, updateType, update, commentId, newCommnet, currentPopupComponent, currentFilmComponent, currentPresenter, typePresenter, target) => {
     this.#uiBlocker.block();
 
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         try {
-          await this.#filmsModel.updateFilm(updateType, update, typePresenter);
+          await this.#filmsModel.updateFilm(updateType, update, typePresenter, target);
         } catch {
           if (!currentPopupComponent){
             currentFilmComponent.shake(currentFilmComponent.element);
@@ -347,7 +354,7 @@ export default class FilmsPresenter {
     }
   };
 
-  #onViewAction = (actionType, updateType, update, commentId, newCommnet, typePresenter) => {
+  #onViewAction = (actionType, updateType, update, commentId, newCommnet, typePresenter, target) => {
     if (typePresenter === Film.RATED_LIST) {
       const currentFilmRatedPresenter = this.#filmRatedPresenter.get(update.id);
       const currentFilmRatedComponent = currentFilmRatedPresenter.filmCardComponent;
@@ -367,10 +374,10 @@ export default class FilmsPresenter {
     const currentFilmPresenter = this.#filmPresenter.get(update.id);
     const currentFilmComponent = currentFilmPresenter.filmCardComponent;
     const currentPopupComponent = currentFilmPresenter.popupComponent;
-    this.#switchUserAction(actionType, updateType, update, commentId, newCommnet, currentPopupComponent, currentFilmComponent, this.#filmPresenter, typePresenter);
+    this.#switchUserAction(actionType, updateType, update, commentId, newCommnet, currentPopupComponent, currentFilmComponent, this.#filmPresenter, typePresenter, target);
   };
 
-  #onModelEvent = (updateType, update, comments, typePresenter) => {
+  #onModelEvent = (updateType, update, comments, typePresenter, target) => {
     switch (updateType) {
       case UpdateType.PRE_MINOR:
         this.#clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
@@ -406,6 +413,13 @@ export default class FilmsPresenter {
           currentFilmPresenter.removePopupKeysHandlers();
           currentFilmPresenter.bodyContentElement.classList.remove('hide-overflow');
           this.#clearAndRenderChange();
+
+          if (target !== this.#filterType) {
+            this.#currentPopupPosition = currentFilmPresenter.getCurrentPopupPosition();
+            this.#clearAndRenderChange();
+            this.#filmPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
+          }
+
           return;
         }
 

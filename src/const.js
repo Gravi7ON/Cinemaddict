@@ -33,10 +33,10 @@ const UpdateType = {
 };
 
 const FilterType = {
-  ALL: 'ALL',
-  WATCH_LIST: 'WATCH',
-  WATCHED: 'WATCHED',
-  FAVORITE: 'FAVORITE'
+  ALL: 'all',
+  WATCH_LIST: 'watchlist',
+  WATCHED: 'watched',
+  FAVORITE: 'favorite'
 };
 
 const TimeLimit = {
