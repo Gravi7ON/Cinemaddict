@@ -11,7 +11,7 @@ const createFilterMenuTemplate = (films, currentFilterType) => (
     <a href="#history" class="main-navigation__item ${currentFilterType === FilterType.WATCHED ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.WATCHED}">History
     <span class="main-navigation__item-count" data-filter-type="${FilterType.WATCHED}">${filter[FilterType.WATCHED](films).length}</span>
     </a>
-    <a href="#favorites" class="main-navigation__item ${currentFilterType === FilterType.FAVORITES ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.FAVORITE}">Favorites
+    <a href="#favorites" class="main-navigation__item ${currentFilterType === FilterType.FAVORITE ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.FAVORITE}">Favorites
     <span class="main-navigation__item-count" data-filter-type="${FilterType.FAVORITE}">${filter[FilterType.FAVORITE](films).length}</span>
     </a>
   </nav>`
