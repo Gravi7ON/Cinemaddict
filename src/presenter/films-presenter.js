@@ -93,13 +93,6 @@ export default class FilmsPresenter {
     this.#renderFilmsCommentedList();
   };
 
-  renderFilmsOfFilter = () => {
-    this.#clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
-    this.#renderCommonFilms();
-    this.#renderFilmsRatedList();
-    this.#renderFilmsCommentedList();
-  };
-
   #renderUserProfile = () => {
     this.#userProfile = new UserProfileView(this.#filmsModel.films);
     render(this.#userProfile, this.#userProfileElement);
@@ -163,7 +156,6 @@ export default class FilmsPresenter {
 
       return;
     }
-
 
     this.#renderFilms(films);
     render(this.#filmsBoard, this.#boardContainer);
@@ -291,8 +283,11 @@ export default class FilmsPresenter {
     }
   };
 
-  #clearAndRenderChange = () => {
+  #clearAndRenderChange = (resetCount) => {
     this.#clearFilmList({rerenderUserProfile: true});
+    if (resetCount) {
+      this.#clearFilmList({resetRenderedFilmsCount: true, rerenderUserProfile: true});
+    }
     this.#renderUserProfile();
     this.#renderCommonFilms();
     this.#renderFilmsRatedList();
@@ -386,6 +381,10 @@ export default class FilmsPresenter {
         this.#renderFilmsCommentedList();
         break;
       case UpdateType.MINOR:
+        if (filter[this.#filterType](this.#filmsModel.films).length === 0) {
+          this.#clearAndRenderChange(true);
+          return;
+        }
         this.#clearAndRenderChange();
         break;
       case UpdateType.MAJOR:
