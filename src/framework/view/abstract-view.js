@@ -2,10 +2,10 @@ import {createElement} from '../render.js';
 import './abstract-view.css';
 
 /** @const {string} Класс, реализующий эффект "покачивания головой" */
-export const SHAKE_CLASS_NAME = 'shake';
+const SHAKE_CLASS_NAME = 'shake';
 
 /** @const {number} Время анимации в миллисекундах */
-export const SHAKE_ANIMATION_TIMEOUT = 600;
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 /**
  * Абстрактный класс представления
