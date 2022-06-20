@@ -413,7 +413,7 @@ export default class FilmsPresenter {
           currentFilmPresenter.bodyContentElement.classList.remove('hide-overflow');
           this.#clearAndRenderChange();
 
-          if (target !== this.#filterType) {
+          if (target !== this.#filterType.toLowerCase()) {
             this.#currentPopupPosition = currentFilmPresenter.getCurrentPopupPosition();
             this.#clearAndRenderChange();
             this.#filmPresenter.get(update.id).rerenderPopup(comments, this.#currentPopupPosition);
